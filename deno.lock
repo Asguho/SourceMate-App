@@ -1,6 +1,7 @@
 {
   "version": "2",
   "remote": {
+    "https://deno.land/x/dir@1.5.1/data_dir/mod.ts": "7d17c6d9e775974245e0456c8f83f751c41c792c06020d12ca1ca69a0ce4e671",
     "https://deno.land/x/xml@2.1.1/mod.ts": "4a314a7a28d1ec92f899ce4c6991f0356c77550a75955ec3f4a36733f08548e8",
     "https://deno.land/x/xml@2.1.1/parse.ts": "614b8648345ae93c641368836947484d321c7ac9312ae12ec750434353cd7385",
     "https://deno.land/x/xml@2.1.1/stringify.ts": "930d35431f153b29d36549cff08fcfbe978e52ccb56af1e3baa2e0760f418b04",
