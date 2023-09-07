@@ -10,7 +10,7 @@ If you have [Deno](https://deno.com/), you can run the CLI with this command:
 
 ```bash
 deno run -A https://raw.githubusercontent.com/Asguho/word-source-cli/main/main.js
-
+```
 
 ### Install executable
 
