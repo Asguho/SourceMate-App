@@ -55,3 +55,4 @@ jobs:
         with:
           tag_name: release
           files: word-source-cli
+          token: ${{ secrets.GITHUB_TOKEN }}
