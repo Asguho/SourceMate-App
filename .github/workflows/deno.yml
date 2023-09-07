@@ -45,6 +45,11 @@ jobs:
       - name: view executable
         run: ls -al
 
+      - name: upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: word-source-cli
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
