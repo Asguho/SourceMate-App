@@ -43,7 +43,7 @@ jobs:
         run: deno task compile
 
       - name: view executable
-        run: ls -l word-source-cli.*
+        run: ls -al
 
       - name: Release
         uses: softprops/action-gh-release@v1
