@@ -45,4 +45,5 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: Release.txt
+          tag-name: release
+          files: word-source-cli.*
