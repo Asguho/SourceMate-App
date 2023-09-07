@@ -82,7 +82,7 @@ try {
 }
 
 if (Deno.args.length > 0) {
-  for (let url of Deno.args) {
+  for (const url of Deno.args) {
     json["b:Sources"]["b:Source"].push(await getSource(url));
   }
   await Deno.writeTextFile(
