@@ -1,5 +1,5 @@
-import { parse, stringify } from "https://deno.land/x/xml/mod.ts";
-import data_dir from "https://deno.land/x/dir/data_dir/mod.ts";
+import { parse, stringify } from "https://deno.land/x/xml@2.1.1/mod.ts";
+import data_dir from "https://deno.land/x/dir@1.5.1/data_dir/mod.ts";
 
 function getAuthorJson(author) {
   if ((author || "").split(" ").length > 1) {
