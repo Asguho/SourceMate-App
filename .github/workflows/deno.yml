@@ -40,19 +40,19 @@ jobs:
         run: deno test -A
 
       - name: compile executable
-        run: deno task compile
+        run: deno task compile-all
 
-      - name: view executable
-        run: ls -al
+      # - name: view executable
+      #   run: ls -al
 
-      - name: upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          path: word-source-cli
+      # - name: upload artifact
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     path: word-source-cli
 
-      - name: Release
+      - name: Create release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: release
-          files: word-source-cli
+          files: WordSourceManager*
           token: ${{ secrets.GITHUBTOKEN }}
