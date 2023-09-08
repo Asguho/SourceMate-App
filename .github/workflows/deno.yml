@@ -55,5 +55,5 @@ jobs:
         with:
           files: WordSourceManager*
           name: 'release'
-          tag_name: '${{ github.sha }}'
+          tag_name: 'tag-${{ github.sha }}'
           token: ${{ secrets.GITHUBTOKEN }}
