@@ -54,5 +54,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: WordSourceManager*
-          tag_name: 'release-${{ github.sha }}'
+          name: 'release'
+          tag_name: '${{ github.sha }}'
           token: ${{ secrets.GITHUBTOKEN }}
