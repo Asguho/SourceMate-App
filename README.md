@@ -15,4 +15,4 @@ deno run -A https://raw.githubusercontent.com/Asguho/word-source-cli/main/main.j
 ### Install executable
 
 You can download the executable from the
-[release page](https://github.com/Asguho/word-source-cli/releases)
+[release page](https://github.com/Asguho/word-source-cli/releases/latest)
