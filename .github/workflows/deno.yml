@@ -50,6 +50,7 @@ jobs:
       #     path: word-source-cli
 
       - name: Create release
+        if: ${{ github.event.pull_request.merged }}
         uses: softprops/action-gh-release@v1
         with:
           files: WordSourceManager*
