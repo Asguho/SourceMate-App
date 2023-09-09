@@ -1,21 +1,28 @@
 import { parse, stringify } from "https://deno.land/x/xml@2.1.1/mod.ts";
 import data_dir from "https://deno.land/x/dir@1.5.1/data_dir/mod.ts";
 
-function getAuthorJson(author) {
-  if ((author || "").split(" ").length > 1) {
-    return {
-      "b:NameList": {
-        "b:Person": {
-          "b:First": (author || "").substring(0, (author || "").indexOf(" ")),
-          "b:Last": (author || "").substring((author || "").indexOf(" ") + 1),
+function getAuthorJson(authors) {
+  const authorJson = [];
+  for (const author of authors) {
+    if ((author.trim() || "").split(" ").length > 1) {
+      const authorNames = (author.trim() || "").split(" ");
+      authorJson.push({
+        "b:NameList": {
+          "b:Person": {
+            "b:First": authorNames[0],
+            "b:Middle": authorNames.slice(1, authorNames.length - 1).join(" "),
+            "b:Last": authorNames[authorNames.length - 1],
+          },
         },
-      },
-    };
-  } else {
-    return {
-      "b:Corporate": author,
-    };
+      });
+    } else {
+      console.log("corporate", author);
+      authorJson.push({
+        "b:Corporate": author.trim() || "",
+      });
+    }
   }
+  return authorJson;
 }
 
 async function getSource(url) {
@@ -30,7 +37,7 @@ async function getSource(url) {
     "b:SourceType": "DocumentFromInternetSite",
     "b:Guid": `{${guid}}`,
     "b:Author": {
-      "b:Author": getAuthorJson(data.author),
+      "b:Author": getAuthorJson(data.authors),
     },
     "b:Title": data.webPageName,
     "b:InternetSiteTitle": data.webSiteName,
