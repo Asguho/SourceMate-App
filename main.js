@@ -1,5 +1,6 @@
 import { parse, stringify } from "https://deno.land/x/xml@2.1.1/mod.ts";
 import data_dir from "https://deno.land/x/dir@1.5.1/data_dir/mod.ts";
+import metadata from "./metadata.json" assert { type: "json" };
 
 function getAuthorJson(authors) {
   const authorJson = [];
@@ -85,6 +86,31 @@ try {
     };
   } else {
     throw error;
+  }
+}
+//https://api.github.com/repos/Asguho/word-source-cli/releases/latest
+if (metadata.tag) {
+  // console.log("Current version:", metadata.tag);
+  const latest = await fetch(
+    "https://api.github.com/repos/Asguho/word-source-cli/releases/latest",
+  ).then((res) => res.json());
+  if (metadata.tag != latest?.tag_name) {
+    // if (latest?.assets[0]?.browser_download_url) {
+    //   await Deno.writeTextFile(
+    //     data_dir() + "/Microsoft/Bibliography/Sources.xml",
+    //     await fetch(latest?.assets[0]?.browser_download_url).then((res) =>
+    //       res.text()
+    //     ),
+    //   );
+    //   for (const asset of latest?.assets) {
+    //     console.log("Download", asset.browser_download_url);
+    //   }
+    // }
+    console.log("New version available");
+    console.log("Please download the new version at:");
+    console.log("https://github.com/Asguho/word-source-cli/releases/latest");
+    prompt("Press enter to continue anyway.");
+    console.clear();
   }
 }
 
