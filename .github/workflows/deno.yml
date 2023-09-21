@@ -38,6 +38,12 @@ jobs:
       - name: Run tests
         run: deno test -A
 
+      - name: Create metadata
+          run: echo '{
+  "tag": ${{ github.sha }}
+}
+' > metadata.json
+
       - name: compile executable
         run: deno task compile-all
 
