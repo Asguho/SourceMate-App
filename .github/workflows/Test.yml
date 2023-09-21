@@ -9,8 +9,6 @@
 name: Deno
 
 on:
-  push:
-    branches: ['main']
   pull_request:
     branches: ['main']
 
@@ -18,7 +16,7 @@ permissions:
   contents: read
 
 jobs:
-  TestingAndReleasing:
+  Testing:
     runs-on: ubuntu-latest
     steps:
       - name: Setup repo
@@ -37,29 +35,3 @@ jobs:
 
       - name: Run tests
         run: deno test -A
-
-      - name: Create metadata
-        run: |
-          echo '{' > metadata.json
-          echo '"tag": tag-${{ github.sha }}' >> metadata.json
-          echo '}' >> metadata.json
-  
-      - name: compile executable
-        run: deno task compile-all
-
-      # - name: view executable
-      #   run: ls -al
-
-      # - name: upload artifact
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     path: word-source-cli
-
-      - name: Create release
-        if: github.event.pull_request.merged == true 
-        uses: softprops/action-gh-release@v1
-        with:
-          files: WordSourceManager*
-          name: 'release'
-          tag_name: 'tag-${{ github.sha }}'
-          token: ${{ secrets.GITHUBTOKEN }}
