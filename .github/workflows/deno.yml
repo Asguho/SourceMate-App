@@ -54,6 +54,8 @@ jobs:
       #   uses: actions/upload-artifact@v2
       #   with:
       #     path: word-source-cli
+      - name: show ref
+        run: echo ${{ github.ref_name }}
 
       - name: Create release
         if: github.event.pull_request.merged == true 
