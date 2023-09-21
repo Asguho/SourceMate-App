@@ -39,7 +39,6 @@ jobs:
         run: deno task compile-all
 
       - name: Create release
-        if: github.event.pull_request.merged == true 
         uses: softprops/action-gh-release@v1
         with:
           files: WordSourceManager*
