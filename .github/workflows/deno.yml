@@ -41,7 +41,7 @@ jobs:
       - name: Create metadata
         run: |
           echo '{' > metadata.json
-          echo '"tag": ${{ github.sha }}' >> metadata.json
+          echo '"tag": tag-${{ github.sha }}' >> metadata.json
           echo '}' >> metadata.json
   
       - name: compile executable
