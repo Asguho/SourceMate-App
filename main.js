@@ -26,13 +26,10 @@ function getAuthorJson(authors) {
   return authorJson;
 }
 
-async function getSource(url) {
+function convertToSourceFormat(data) {
   const guid = crypto.randomUUID().toUpperCase();
   const date = new Date();
-  const data = await fetch(
-    "https://auto-references-api.deno.dev/api?url=" + encodeURIComponent(url),
-  ).then((res) => res.json());
-  console.log("Source added:", data);
+
   return {
     "b:Tag": guid,
     "b:SourceType": "DocumentFromInternetSite",
@@ -116,7 +113,7 @@ if (metadata.tag) {
 
 if (Deno.args.length > 0) {
   for (const url of Deno.args) {
-    json["b:Sources"]["b:Source"].push(await getSource(url));
+    json["b:Sources"]["b:Source"].push(getSource(await getSource(url)));
   }
   await Deno.writeTextFile(
     data_dir() + "/Microsoft/Bibliography/Sources.xml",
@@ -124,15 +121,31 @@ if (Deno.args.length > 0) {
   );
 } else {
   while (true) {
-    const url = prompt("Please enter a url to a new source:");
     console.clear();
-    if (url) {
-      console.log("Url:", url);
-      json["b:Sources"]["b:Source"].push(await getSource(url));
-      await Deno.writeTextFile(
-        data_dir() + "/Microsoft/Bibliography/Sources.xml",
-        stringify(json),
-      );
+
+    const url = prompt("Please enter a url to a new source:");
+    if (!url) {
+      continue;
     }
+
+    const data = getSource(url);
+    if (!data?.webPageName) {
+      console.log("couldn't find data for this url:", url);
+      continue;
+    }
+
+    console.log("Source added:", data);
+    json["b:Sources"]["b:Source"].push(convertToSourceFormat(data));
+    await Deno.writeTextFile(
+      data_dir() + "/Microsoft/Bibliography/Sources.xml",
+      stringify(json),
+    );
   }
+}
+
+async function getSource(url) {
+  return await fetch(
+    "https://auto-references-api.deno.dev/api?url=" +
+      encodeURIComponent(url),
+  ).then((res) => res.json());
 }
