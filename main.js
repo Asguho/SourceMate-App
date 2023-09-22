@@ -26,13 +26,10 @@ function getAuthorJson(authors) {
   return authorJson;
 }
 
-async function getSource(url) {
+async function getSource(data) {
   const guid = crypto.randomUUID().toUpperCase();
   const date = new Date();
-  const data = await fetch(
-    "https://auto-references-api.deno.dev/api?url=" + encodeURIComponent(url),
-  ).then((res) => res.json());
-  console.log("Source added:", data);
+
   return {
     "b:Tag": guid,
     "b:SourceType": "DocumentFromInternetSite",
@@ -128,7 +125,16 @@ if (Deno.args.length > 0) {
     console.clear();
     if (url) {
       console.log("Url:", url);
-      json["b:Sources"]["b:Source"].push(await getSource(url));
+      const data = await fetch(
+        "https://auto-references-api.deno.dev/api?url=" +
+          encodeURIComponent(url),
+      ).then((res) => res.json());
+      if (data?.webPageName) {
+        console.log("couldnt find data for this url");
+        continue;
+      }
+      console.log("Source added:", data);
+      json["b:Sources"]["b:Source"].push(await getSource(data));
       await Deno.writeTextFile(
         data_dir() + "/Microsoft/Bibliography/Sources.xml",
         stringify(json),
