@@ -125,11 +125,14 @@ if (Deno.args.length > 0) {
 } else {
   while (true) {
     const url = prompt("Please enter a url to a new source:");
-    console.log("Url:", url);
-    json["b:Sources"]["b:Source"].push(await getSource(url));
-    await Deno.writeTextFile(
-      data_dir() + "/Microsoft/Bibliography/Sources.xml",
-      stringify(json),
-    );
+    console.clear();
+    if(url){
+      console.log("Url:", url);
+      json["b:Sources"]["b:Source"].push(await getSource(url));
+      await Deno.writeTextFile(
+        data_dir() + "/Microsoft/Bibliography/Sources.xml",
+        stringify(json),
+      );
+    }
   }
 }
