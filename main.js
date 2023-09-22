@@ -126,7 +126,7 @@ if (Deno.args.length > 0) {
   while (true) {
     const url = prompt("Please enter a url to a new source:");
     console.clear();
-    if(url) {
+    if (url) {
       console.log("Url:", url);
       json["b:Sources"]["b:Source"].push(await getSource(url));
       await Deno.writeTextFile(
