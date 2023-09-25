@@ -121,14 +121,14 @@ if (Deno.args.length > 0) {
   );
 } else {
   while (true) {
+    const url = prompt("Please enter a url to a new source:");
     console.clear();
 
-    const url = prompt("Please enter a url to a new source:");
     if (!url) {
       continue;
     }
 
-    const data = getSource(url);
+    const data = await getSource(url);
     if (!data?.webPageName) {
       console.log("couldn't find data for this url:", url);
       continue;
