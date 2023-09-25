@@ -128,7 +128,7 @@ if (Deno.args.length > 0) {
       continue;
     }
 
-    const data = getSource(url);
+    const data = await getSource(url);
     if (!data?.webPageName) {
       console.log("couldn't find data for this url:", url);
       continue;
