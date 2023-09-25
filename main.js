@@ -19,20 +19,10 @@ function getAuthorJson(authors) {
   if (
     authors.length == 1 && ((authors[0].trim() || "").split(" ").length > 1)
   ) {
-    console.log(
-      "Corporate author",
-      authors.length == 1,
-      (authors[0].trim() || "").split(" ").length > 1,
-    );
     return ({
       "b:Corporate": authors[0].trim() || "",
     });
   } else {
-    console.log(
-      "Personal author",
-      authors.length == 1,
-      (authors[0].trim() || "").split(" ").length == 1,
-    );
     const authorsJson = [];
     for (const author of authors) {
       const authorNames = (author.trim() || "").split(" ");
@@ -74,6 +64,7 @@ function convertToSourceFormat(data) {
 }
 
 let json;
+
 try {
   json = parse(
     await Deno.readTextFile(data_dir() + "/Microsoft/Bibliography/Sources.xml"),
@@ -109,8 +100,6 @@ try {
     throw error;
   }
 }
-
-
 
 if (Deno.args.length > 0) {
   for (const url of Deno.args) {
