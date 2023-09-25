@@ -3,27 +3,38 @@ import data_dir from "https://deno.land/x/dir@1.5.1/data_dir/mod.ts";
 import metadata from "./metadata.json" assert { type: "json" };
 
 function getAuthorJson(authors) {
-  const authorJson = [];
-  for (const author of authors) {
-    if ((author.trim() || "").split(" ").length > 1) {
+  if (
+    authors.length == 1 && ((authors[0].trim() || "").split(" ").length > 1)
+  ) {
+    console.log(
+      "Corporate author",
+      authors.length == 1,
+      (authors[0].trim() || "").split(" ").length > 1,
+    );
+    return ({
+      "b:Corporate": authors[0].trim() || "",
+    });
+  } else {
+    console.log(
+      "Personal author",
+      authors.length == 1,
+      (authors[0].trim() || "").split(" ").length == 1,
+    );
+    const authorsJson = [];
+    for (const author of authors) {
       const authorNames = (author.trim() || "").split(" ");
-      authorJson.push({
-        "b:NameList": {
-          "b:Person": {
-            "b:First": authorNames[0],
-            "b:Middle": authorNames.slice(1, authorNames.length - 1).join(" "),
-            "b:Last": authorNames[authorNames.length - 1],
-          },
+      authorsJson.push({
+        "b:Person": {
+          "b:First": authorNames[0],
+          "b:Middle": authorNames.slice(1, authorNames.length - 1).join(" "),
+          "b:Last": authorNames[authorNames.length - 1],
         },
       });
-    } else {
-      console.log("corporate", author);
-      authorJson.push({
-        "b:Corporate": author.trim() || "",
-      });
     }
+    return ({
+      "b:NameList": authorsJson,
+    });
   }
-  return authorJson;
 }
 
 function convertToSourceFormat(data) {
