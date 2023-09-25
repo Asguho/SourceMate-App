@@ -15,6 +15,39 @@ if (metadata.tag) {
   }
 }
 
+const json = await getJson();
+if (Deno.args.length > 0) {
+  for (const url of Deno.args) {
+    json["b:Sources"]["b:Source"].push(getSource(await getSource(url)));
+  }
+  await Deno.writeTextFile(
+    data_dir() + "/Microsoft/Bibliography/Sources.xml",
+    stringify(json),
+  );
+} else {
+  while (true) {
+    const url = prompt("Please enter a url to a new source:");
+    console.clear();
+
+    if (!url) {
+      continue;
+    }
+
+    const data = await getSource(url);
+    if (!data?.webPageName) {
+      console.log("couldn't find data for this url:", url);
+      continue;
+    }
+
+    console.log("Source added:", data);
+    json["b:Sources"]["b:Source"].push(convertToSourceFormat(data));
+    await Deno.writeTextFile(
+      data_dir() + "/Microsoft/Bibliography/Sources.xml",
+      stringify(json),
+    );
+  }
+}
+
 function getAuthorJson(authors) {
   if (
     authors.length == 1 && ((authors[0].trim() || "").split(" ").length > 1)
@@ -63,74 +96,46 @@ function convertToSourceFormat(data) {
   };
 }
 
-let json;
-
-try {
-  json = parse(
-    await Deno.readTextFile(data_dir() + "/Microsoft/Bibliography/Sources.xml"),
-  );
-  json["xml"]["@version"] = "1.0";
-  if (!Array.isArray(json["b:Sources"]["b:Source"])) {
-    json = {
-      xml: { "@version": "1.0" },
-      "b:Sources": {
-        "@SelectedStyle": null,
-        "@xmlns:b":
-          "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
-        "@xmlns":
-          "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
-        "b:Source": [json["b:Sources"]["b:Source"]],
-      },
-    };
-  }
-} catch (error) {
-  if (error instanceof Deno.errors.NotFound) {
-    json = {
-      xml: { "@version": "1.0" },
-      "b:Sources": {
-        "@SelectedStyle": null,
-        "@xmlns:b":
-          "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
-        "@xmlns":
-          "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
-        "b:Source": [],
-      },
-    };
-  } else {
-    throw error;
-  }
-}
-
-if (Deno.args.length > 0) {
-  for (const url of Deno.args) {
-    json["b:Sources"]["b:Source"].push(getSource(await getSource(url)));
-  }
-  await Deno.writeTextFile(
-    data_dir() + "/Microsoft/Bibliography/Sources.xml",
-    stringify(json),
-  );
-} else {
-  while (true) {
-    const url = prompt("Please enter a url to a new source:");
-    console.clear();
-
-    if (!url) {
-      continue;
-    }
-
-    const data = await getSource(url);
-    if (!data?.webPageName) {
-      console.log("couldn't find data for this url:", url);
-      continue;
-    }
-
-    console.log("Source added:", data);
-    json["b:Sources"]["b:Source"].push(convertToSourceFormat(data));
-    await Deno.writeTextFile(
-      data_dir() + "/Microsoft/Bibliography/Sources.xml",
-      stringify(json),
+async function getJson() {
+  let json;
+  try {
+    json = parse(
+      await Deno.readTextFile(
+        data_dir() + "/Microsoft/Bibliography/Sources.xml",
+      ),
     );
+    json["xml"]["@version"] = "1.0";
+    if (!Array.isArray(json["b:Sources"]["b:Source"])) {
+      json = {
+        xml: { "@version": "1.0" },
+        "b:Sources": {
+          "@SelectedStyle": null,
+          "@xmlns:b":
+            "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
+          "@xmlns":
+            "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
+          "b:Source": [json["b:Sources"]["b:Source"]],
+        },
+      };
+    }
+  } catch (error) {
+    if (error instanceof Deno.errors.NotFound) {
+      json = {
+        xml: { "@version": "1.0" },
+        "b:Sources": {
+          "@SelectedStyle": null,
+          "@xmlns:b":
+            "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
+          "@xmlns":
+            "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
+          "b:Source": [],
+        },
+      };
+    } else {
+      throw error;
+    }
   }
+  return json;
 }
 
 async function getSource(url) {
