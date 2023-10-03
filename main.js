@@ -1,6 +1,7 @@
 import { parse, stringify } from "https://deno.land/x/xml@2.1.1/mod.ts";
 import data_dir from "https://deno.land/x/dir@1.5.1/data_dir/mod.ts";
 import metadata from "./metadata.json" assert { type: "json" };
+const path = data_dir() + "/Microsoft/Bibliography/Sources.xml";
 
 if (metadata.tag) {
   const latest = await fetch(
@@ -20,8 +21,9 @@ if (Deno.args.length > 0) {
   for (const url of Deno.args) {
     json["b:Sources"]["b:Source"].push(getSource(await getSource(url)));
   }
+  await Deno.mkdir(path, { recursive: true });
   await Deno.writeTextFile(
-    data_dir() + "/Microsoft/Bibliography/Sources.xml",
+    path,
     stringify(json),
   );
 } else {
