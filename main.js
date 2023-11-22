@@ -52,7 +52,7 @@ if (Deno.args.length > 0) {
 
 function getAuthorJson(authors) {
   if (
-    authors.length == 1 && ((authors[0].trim() || "").split(" ").length > 1)
+    authors.length == 1 && ((authors[0].trim() || "").split(" ").length >= 1)
   ) {
     return ({
       "b:Corporate": authors[0].trim() || "",
