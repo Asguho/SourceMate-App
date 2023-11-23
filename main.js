@@ -28,7 +28,7 @@ if (Deno.args.length > 0) {
   );
 } else {
   while (true) {
-    const url = prompt("Please enter a url to a new source:");
+    const url = prompt("Please enter a url to a new source:").trim();
     console.clear();
 
     if (!url) {
@@ -52,7 +52,7 @@ if (Deno.args.length > 0) {
 
 function getAuthorJson(authors) {
   if (
-    authors.length == 1 && ((authors[0].trim() || "").split(" ").length >= 1)
+    authors.length == 1 && ((authors[0].trim() || "").split(" ").length <= 1)
   ) {
     return ({
       "b:Corporate": authors[0].trim() || "",
