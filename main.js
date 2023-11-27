@@ -28,6 +28,7 @@ if (Deno.args.length > 0) {
   );
 } else {
   while (true) {
+    console.log("\n\n");
     const url = prompt("Please enter a url to a new source:").trim();
     console.clear();
 
@@ -36,17 +37,52 @@ if (Deno.args.length > 0) {
     }
 
     const data = await getSource(url);
-    if (!data?.webPageName) {
+    console.log("Data retrived:", data);
+
+    if (!data?.otherData?.response?.ok) {
       console.log("couldn't find data for this url:", url);
       continue;
     }
 
-    console.log("Source added:", data);
+    if (!data?.authors?.[0]) {
+      data.authors = prompt(
+        `Please enter the authors of the source (separated with commas). Press enter for the default:`,
+        data?.otherData?.url?.hostname,
+      ).split(",");
+    }
+
+    if ((data?.otherData?.hostname || "").split(".").some((x) => data.webPageName.includes(x))) {
+      data.webPageName = prompt(
+        `Please enter the name of the page. Press enter for the default:`,
+        data.webPageName,
+      );
+    }
+
+    if (data.url != url) {
+      console.log(
+        "The url you entered is different from the canonical url, please check if the source is correct.",
+      );
+      console.log(`Url entered: \n${url}}`);
+      console.log(`Canonical url: \n${data.url}`);
+      if (!confirm("would you like to use the canonical url instead?")) {
+        data.url = url;
+      }
+    }
+
+    if (!data.year) {
+      if (confirm("No year was found, would you like to enter the date?")) {
+        data.year = prompt("Please enter the year:", "");
+        data.month = prompt("Please enter the month:", "");
+        data.day = prompt("Please enter the day:", "");
+      }
+    }
+
     json["b:Sources"]["b:Source"].push(convertToSourceFormat(data));
     await Deno.writeTextFile(
       data_dir() + "/Microsoft/Bibliography/Sources.xml",
       stringify(json),
     );
+    console.log("Source added successfully");
   }
 }
 
