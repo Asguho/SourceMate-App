@@ -51,7 +51,11 @@ if (Deno.args.length > 0) {
       ).split(",");
     }
 
-    if ((data?.otherData?.hostname || "").split(".").some((x) => data.webPageName.includes(x))) {
+    if (
+      (data?.otherData?.hostname || "").split(".").some((x) =>
+        data.webPageName.includes(x)
+      )
+    ) {
       data.webPageName = prompt(
         `Please enter the name of the page. Press enter for the default:`,
         data.webPageName,
