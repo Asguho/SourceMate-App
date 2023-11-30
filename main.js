@@ -28,7 +28,7 @@ if (Deno.args.length > 0) {
   );
 } else {
   while (true) {
-    const url = prompt("Please enter a url to a new source:") || "".trim();
+    const url = prompt("Please enter a url to a new source:", "").trim();
     console.clear();
 
     if (!url) {
@@ -39,7 +39,7 @@ if (Deno.args.length > 0) {
     console.log("Data retrived:", data);
 
     if (!data?.otherData?.response?.ok) {
-      console.log(`couldn't find data for this url: ${url}\n\n`);
+      console.log(`Couldn't find data for this url: ${url}\n\n`);
       continue;
     }
 
@@ -73,7 +73,7 @@ if (Deno.args.length > 0) {
     }
 
     if (!data.year) {
-      if (confirm("No year was found, would you like to enter the date?")) {
+      if (confirm("No date was found, would you like to enter the date?")) {
         data.year = prompt("Please enter the year:", "");
         data.month = prompt("Please enter the month:", "");
         data.day = prompt("Please enter the day:", "");
