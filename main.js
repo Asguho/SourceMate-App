@@ -28,7 +28,6 @@ if (Deno.args.length > 0) {
   );
 } else {
   while (true) {
-    console.log("\n\n");
     const url = prompt("Please enter a url to a new source:").trim();
     console.clear();
 
@@ -40,7 +39,7 @@ if (Deno.args.length > 0) {
     console.log("Data retrived:", data);
 
     if (!data?.otherData?.response?.ok) {
-      console.log("couldn't find data for this url:", url);
+      console.log(`couldn't find data for this url: ${url}\n\n`);
       continue;
     }
 
@@ -86,7 +85,7 @@ if (Deno.args.length > 0) {
       data_dir() + "/Microsoft/Bibliography/Sources.xml",
       stringify(json),
     );
-    console.log("Source added successfully");
+    console.log("Source added successfully\n\n");
   }
 }
 
