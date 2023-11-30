@@ -28,7 +28,7 @@ if (Deno.args.length > 0) {
   );
 } else {
   while (true) {
-    const url = prompt("Please enter a url to a new source:").trim();
+    const url = prompt("Please enter a url to a new source:") || "".trim();
     console.clear();
 
     if (!url) {
