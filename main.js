@@ -46,14 +46,18 @@ if (Deno.args.length > 0) {
     if (!data?.authors?.[0]) {
       data.authors = prompt(
         `Please enter the authors of the source (separated with commas). Press enter for the default:`,
-        await getSiteName(data?.otherData?.url?.hostname),
+        (await getSiteName(data?.otherData?.url?.hostname)).trim(),
       ).split(",");
     }
-
     if (
-      (data?.otherData?.hostname || "").split(".").some((x) =>
-        data.webPageName.includes(x)
-      )
+      (data?.otherData?.url?.hostname).split(".").some((x) => {
+        if (data.webPageName.toLowerCase().includes(x.toLowerCase())) {
+          console.log(
+            `"${data.webPageName}" includes the hostname: "${x}"`,
+          );
+        }
+        return data.webPageName.toLowerCase().includes(x.toLowerCase());
+      })
     ) {
       data.webPageName = prompt(
         `Please enter the name of the page. Press enter for the default:`,
