@@ -46,7 +46,7 @@ if (Deno.args.length > 0) {
     if (!data?.authors?.[0]) {
       data.authors = prompt(
         `Please enter the authors of the source (separated with commas). Press enter for the default:`,
-        data?.otherData?.url?.hostname,
+        await getSiteName(data?.otherData?.url?.hostname),
       ).split(",");
     }
 
@@ -65,7 +65,7 @@ if (Deno.args.length > 0) {
       console.log(
         "The url you entered is different from the canonical url, please check if the source is correct.",
       );
-      console.log(`Url entered: \n${url}}`);
+      console.log(`Url entered: \n${url}`);
       console.log(`Canonical url: \n${data.url}`);
       if (!confirm("would you like to use the canonical url instead?")) {
         data.url = url;
@@ -87,6 +87,11 @@ if (Deno.args.length > 0) {
     );
     console.log("Source added successfully\n\n");
   }
+}
+async function getSiteName(hostname) {
+  const res = await getSource(hostname);
+  const title = res?.otherData?.title;
+  return res?.authors?.[0] || title.split(" - ")?.[0] || title;
 }
 
 function getAuthorJson(authors) {
