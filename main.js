@@ -36,7 +36,7 @@ if (Deno.args.length > 0) {
     }
 
     const data = await getSource(url);
-    console.log("Data retrived:", data);
+    //console.log("Data retrived:", data);
 
     if (!data?.otherData?.response?.ok) {
       console.log(`Couldn't find data for this url: ${url}\n\n`);
@@ -92,6 +92,7 @@ if (Deno.args.length > 0) {
     console.log("Source added successfully\n\n");
   }
 }
+
 async function getSiteName(hostname) {
   const res = await getSource(hostname);
   const title = res?.otherData?.title;
@@ -126,6 +127,21 @@ function getAuthorJson(authors) {
 function convertToSourceFormat(data) {
   const guid = crypto.randomUUID().toUpperCase();
   const date = new Date();
+
+  console.log("\nData added:");
+  console.log("Tag:", guid);
+  console.log("SourceType:", "DocumentFromInternetSite");
+  console.log("Guid:", `{${guid}}`);
+  console.log("Author:", getAuthorJson(data.authors));
+  console.log("Title:", data.webPageName);
+  console.log("InternetSiteTitle:", data.webSiteName);
+  console.log("Year:", data.year);
+  console.log("Month:", data.month);
+  console.log("Day:", data.day);
+  console.log("URL:", data.url);
+  console.log("YearAccessed:", date.getFullYear());
+  console.log("MonthAccessed:", date.getMonth() + 1);
+  console.log("DayAccessed:", date.getDate());
 
   return {
     "b:Tag": guid,
