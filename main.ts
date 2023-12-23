@@ -1,9 +1,10 @@
 import { parse, stringify } from "https://deno.land/x/xml@2.1.1/mod.ts";
 import data_dir from "https://deno.land/x/dir@1.5.1/data_dir/mod.ts";
 import metadata from "./metadata.json" assert { type: "json" };
-const path = data_dir() + "/Microsoft/Bibliography/Sources.xml";
+import { Source } from "./types.ts";
+// import { prompt, confirm } from "https://deno.land/x/cliffy/prompt/mod.ts";
 
-if (metadata.tag) {
+if (metadata?.tag) {
   const latest = await fetch(
     "https://api.github.com/repos/Asguho/word-source-cli/releases/latest",
   ).then((res) => res.json());
@@ -18,17 +19,19 @@ if (metadata.tag) {
 
 const json = await getJson();
 if (Deno.args.length > 0) {
-  for (const url of Deno.args) {
-    json["b:Sources"]["b:Source"].push(getSource(await getSource(url)));
-  }
-  await Deno.mkdir(path, { recursive: true });
-  await Deno.writeTextFile(
-    path,
-    stringify(json),
-  );
+  // for (const url of Deno.args) {
+  //   json["b:Sources"]["b:Source"].push(getSource(await getSource(url)));
+  // }
+  // await Deno.mkdir(path, { recursive: true });
+  // await Deno.writeTextFile(
+  //   path,
+  //   stringify(json),
+  // );
+  console.warn("This feature is not yet implemented");
 } else {
   while (true) {
-    const url = prompt("Please enter a url to a new source:", "").trim();
+    const url = (prompt("Please enter a url to a new source:", "") || "")
+      .trim();
     console.clear();
 
     if (!url) {
@@ -44,13 +47,13 @@ if (Deno.args.length > 0) {
     }
 
     if (!data?.authors?.[0]) {
-      data.authors = prompt(
+      data.authors = (prompt(
         `Please enter the authors of the source (separated with commas). Press enter for the default:`,
         (await getSiteName(data?.otherData?.url?.hostname)).trim(),
-      ).split(",");
+      ) || "").split(",");
     }
     if (
-      (data?.otherData?.url?.hostname).split(".").some((x) => {
+      ((data?.otherData?.url?.hostname) as string).split(".").some((x) => {
         if (data.webPageName.toLowerCase().includes(x.toLowerCase())) {
           console.log(
             `"${data.webPageName}" includes the hostname: "${x}"`,
@@ -62,7 +65,7 @@ if (Deno.args.length > 0) {
       data.webPageName = prompt(
         `Please enter the name of the page. Press enter for the default:`,
         data.webPageName,
-      );
+      ) as string;
     }
 
     if (data.url != url) {
@@ -78,12 +81,12 @@ if (Deno.args.length > 0) {
 
     if (!data.year) {
       if (confirm("No date was found, would you like to enter the date?")) {
-        data.year = prompt("Please enter the year:", "");
-        data.month = prompt("Please enter the month:", "");
-        data.day = prompt("Please enter the day:", "");
+        data.year = prompt("Please enter the year:") || "";
+        data.month = prompt("Please enter the month:") || "";
+        data.day = prompt("Please enter the day:") || "";
       }
     }
-
+    //@ts-expect-error: I know what I'm doing
     json["b:Sources"]["b:Source"].push(convertToSourceFormat(data));
     await Deno.writeTextFile(
       data_dir() + "/Microsoft/Bibliography/Sources.xml",
@@ -93,13 +96,13 @@ if (Deno.args.length > 0) {
   }
 }
 
-async function getSiteName(hostname) {
+async function getSiteName(hostname: string) {
   const res = await getSource(hostname);
   const title = res?.otherData?.title;
   return res?.authors?.[0] || title.split(" - ")?.[0] || title;
 }
 
-function getAuthorJson(authors) {
+function getAuthorJson(authors: string[]) {
   if (
     authors.length == 1 && ((authors[0].trim() || "").split(" ").length <= 1)
   ) {
@@ -123,8 +126,7 @@ function getAuthorJson(authors) {
     });
   }
 }
-
-function convertToSourceFormat(data) {
+function convertToSourceFormat(data: Source) {
   const guid = crypto.randomUUID().toUpperCase();
   const date = new Date();
 
@@ -163,16 +165,15 @@ function convertToSourceFormat(data) {
 }
 
 async function getJson() {
-  let json;
   try {
-    json = parse(
+    const json = parse(
       await Deno.readTextFile(
         data_dir() + "/Microsoft/Bibliography/Sources.xml",
       ),
     );
-    json["xml"]["@version"] = "1.0";
-    if (!Array.isArray(json["b:Sources"]["b:Source"])) {
-      json = {
+    //@ts-expect-error: I know what I'm doing
+    if (!Array.isArray(json?.["b:Sources"]?.["b:Source"])) {
+      return {
         xml: { "@version": "1.0" },
         "b:Sources": {
           "@SelectedStyle": null,
@@ -180,13 +181,15 @@ async function getJson() {
             "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
           "@xmlns":
             "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
+          //@ts-expect-error: I know what I'm doing
           "b:Source": [json["b:Sources"]["b:Source"]],
         },
       };
     }
+    return json;
   } catch (error) {
     if (error instanceof Deno.errors.NotFound) {
-      json = {
+      return {
         xml: { "@version": "1.0" },
         "b:Sources": {
           "@SelectedStyle": null,
@@ -201,10 +204,9 @@ async function getJson() {
       throw error;
     }
   }
-  return json;
 }
 
-async function getSource(url) {
+async function getSource(url: string): Promise<Source> {
   return await fetch(
     "https://auto-references-api.deno.dev/api?url=" +
       encodeURIComponent(url),
