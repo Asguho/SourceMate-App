@@ -16,29 +16,27 @@ try {
 
 // Check and create shortcut
 if (dataDir && !Deno.cwd().includes(dataDir)) {
-  if (confirm("Would you like a shortcut on the desktop?")) {
-    await Deno.mkdir(dataDir + "\\Asguho\\WordSourceCLI", { recursive: true });
-    await Deno.rename(
-      Deno.execPath(),
-      dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
-    );
+  await Deno.mkdir(dataDir + "\\Asguho\\WordSourceCLI", { recursive: true });
+  await Deno.rename(
+    Deno.execPath(),
+    dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
+  );
 
-    try {
-      await Deno.symlink(
-        dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
-        Deno.execPath() + ".lnk",
-      );
-    } catch (_) {
-      await Deno.link(
-        dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
-        Deno.execPath(),
-      );
-      // console.error(error);
-      console.error(
-        "Couldn't create shortcut, please run the file as administrator.",
-      );
-      prompt("Press enter to continue anyway...");
-    }
+  try {
+    await Deno.symlink(
+      dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
+      Deno.execPath() + ".lnk",
+    );
+  } catch (error) {
+    await Deno.link(
+      dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
+      Deno.execPath(),
+    );
+    console.debug(error);
+    console.error(
+      "Couldn't create shortcut, please run the file as administrator.",
+    );
+    prompt("Press enter to continue anyway...");
   }
 }
 
