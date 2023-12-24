@@ -73,7 +73,7 @@ if (Deno.args.length > 0) {
       );
       console.log(`Url entered: \n${url}`);
       console.log(`Canonical url: \n${data.url}`);
-      if (!confirm("would you like to use the canonical url instead?")) {
+      if (!confirm("Would you like to use the canonical url instead?")) {
         data.url = url;
       }
     }
@@ -85,7 +85,14 @@ if (Deno.args.length > 0) {
         data.day = prompt("Please enter the day:") || "";
       }
     }
-    //@ts-expect-error: I know what I'm doing
+    if (
+      !(json?.["b:Sources"] instanceof Object &&
+        Array.isArray(json?.["b:Sources"]?.["b:Source"]))
+    ) {
+      console.error("Invalid json format");
+      continue;
+    }
+
     json["b:Sources"]["b:Source"].push(convertToSourceFormat(data));
     await Deno.writeTextFile(
       data_dir() + "/Microsoft/Bibliography/Sources.xml",
@@ -165,22 +172,30 @@ async function getJson() {
         data_dir() + "/Microsoft/Bibliography/Sources.xml",
       ),
     );
-    //@ts-expect-error: I know what I'm doing
-    if (!Array.isArray(json?.["b:Sources"]?.["b:Source"])) {
-      return {
-        xml: { "@version": "1.0" },
-        "b:Sources": {
-          "@SelectedStyle": null,
-          "@xmlns:b":
-            "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
-          "@xmlns":
-            "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
-          //@ts-expect-error: I know what I'm doing
-          "b:Source": [json["b:Sources"]["b:Source"]],
-        },
-      };
+    if (json?.["b:Sources"] instanceof Object) {
+      if (Array.isArray(json?.["b:Sources"]?.["b:Source"])) {
+        if (json?.xml) {
+          json.xml["@version"] = "1.0";
+        } else {
+          console.error("xml is not defined");
+        }
+        return json;
+      }
     }
-    return json;
+
+    return {
+      xml: { "@version": "1.0" },
+      "b:Sources": {
+        "@SelectedStyle": null,
+        "@xmlns:b":
+          "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
+        "@xmlns":
+          "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
+        "b:Source": json["b:Sources"] instanceof Object
+          ? [json["b:Sources"]["b:Source"]]
+          : [],
+      },
+    };
   } catch (error) {
     if (error instanceof Deno.errors.NotFound) {
       return {
