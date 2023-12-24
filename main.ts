@@ -64,7 +64,15 @@ if (Deno.args.length > 0) {
           );
         }
         return data.webPageName.toLowerCase().includes(x.toLowerCase());
-      })
+      }) || data.authors.some((x) => {
+        if (data.webPageName.toLowerCase().includes(x.toLowerCase())) {
+          console.log(
+            `"${data.webPageName}" includes the author: "${x}"`,
+          );
+        }
+        return data.webPageName.toLowerCase().includes(x.toLowerCase());
+      }) || data.webPageName.includes(" - ") ||
+      data.webPageName.includes(" | ")
     ) {
       data.webPageName = prompt(
         `Please enter the name of the page:`,
