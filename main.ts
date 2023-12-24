@@ -15,7 +15,7 @@ try {
 }
 
 // Check and create shortcut
-if (dataDir && !Deno.cwd().includes(dataDir)) {
+if (dataDir && !Deno.cwd().includes(dataDir) && Deno.cwd() != Deno.execPath()) {
   await Deno.mkdir(dataDir + "\\Asguho\\WordSourceCLI", { recursive: true });
   await Deno.rename(
     Deno.execPath(),
@@ -27,11 +27,12 @@ if (dataDir && !Deno.cwd().includes(dataDir)) {
       dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
       Deno.execPath() + ".lnk",
     );
-  } catch (_error) {
+  } catch (error) {
     await Deno.link(
       dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
       Deno.execPath(),
     );
+    console.warn(error[0]);
     console.error(
       "Couldn't create shortcut, please run the file as administrator.",
     );
