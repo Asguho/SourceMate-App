@@ -2,7 +2,6 @@ import { parse, stringify } from "https://deno.land/x/xml@2.1.1/mod.ts";
 import data_dir from "https://deno.land/x/dir@1.5.1/data_dir/mod.ts";
 import metadata from "./metadata.json" assert { type: "json" };
 import { Source } from "./types.ts";
-// import { prompt, confirm } from "https://deno.land/x/cliffy/prompt/mod.ts";
 
 if (metadata?.tag) {
   const latest = await fetch(
@@ -30,7 +29,7 @@ if (Deno.args.length > 0) {
   console.warn("This feature is not yet implemented");
 } else {
   while (true) {
-    const url = (prompt("Please enter a url to a new source:", "") || "")
+    const url = (prompt("Please enter a url to a new source:") || "")
       .trim();
     console.clear();
 
@@ -48,12 +47,12 @@ if (Deno.args.length > 0) {
 
     if (!data?.authors?.[0]) {
       data.authors = (prompt(
-        `Please enter the authors of the source (separated with commas). Press enter for the default:`,
+        `Please enter the authors of the source (separated with commas):`,
         (await getSiteName(data?.otherData?.url?.hostname)).trim(),
       ) || "").split(",");
     }
     if (
-      ((data?.otherData?.url?.hostname) as string).split(".").some((x) => {
+      (data?.otherData?.url?.hostname).split(".").some((x) => {
         if (data.webPageName.toLowerCase().includes(x.toLowerCase())) {
           console.log(
             `"${data.webPageName}" includes the hostname: "${x}"`,
@@ -63,9 +62,9 @@ if (Deno.args.length > 0) {
       })
     ) {
       data.webPageName = prompt(
-        `Please enter the name of the page. Press enter for the default:`,
+        `Please enter the name of the page:`,
         data.webPageName,
-      ) as string;
+      ) || data.webPageName;
     }
 
     if (data.url != url) {
@@ -131,19 +130,14 @@ function convertToSourceFormat(data: Source) {
   const date = new Date();
 
   console.log("\nData added:");
-  console.log("Tag:", guid);
-  console.log("SourceType:", "DocumentFromInternetSite");
-  console.log("Guid:", `{${guid}}`);
   console.log("Author:", getAuthorJson(data.authors));
+
   console.log("Title:", data.webPageName);
   console.log("InternetSiteTitle:", data.webSiteName);
-  console.log("Year:", data.year);
-  console.log("Month:", data.month);
-  console.log("Day:", data.day);
+  if (data.year) console.log("Year:", data.year);
+  if (data.month) console.log("Month:", data.month);
+  if (data.day) console.log("Day:", data.day);
   console.log("URL:", data.url);
-  console.log("YearAccessed:", date.getFullYear());
-  console.log("MonthAccessed:", date.getMonth() + 1);
-  console.log("DayAccessed:", date.getDate());
 
   return {
     "b:Tag": guid,
