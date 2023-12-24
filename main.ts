@@ -75,7 +75,7 @@ if (Deno.args.length > 0) {
       data.webPageName.includes(" | ")
     ) {
       data.webPageName = prompt(
-        `Please enter the name of the page:`,
+        `Please edit the name of the page:`,
         data.webPageName,
       ) || data.webPageName;
     }
