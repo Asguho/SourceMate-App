@@ -17,7 +17,6 @@ try {
 // Check and create shortcut
 if (dataDir && !Deno.cwd().includes(dataDir)) {
   if (confirm("Would you like a shortcut on the desktop?")) {
-    console.log("Creating shortcut...");
     await Deno.mkdir(dataDir + "\\Asguho\\WordSourceCLI", { recursive: true });
     await Deno.rename(
       Deno.execPath(),
@@ -29,16 +28,16 @@ if (dataDir && !Deno.cwd().includes(dataDir)) {
         dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
         Deno.execPath() + ".lnk",
       );
-    } catch (error) {
+    } catch (_) {
       await Deno.link(
         dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
         Deno.execPath(),
       );
-      console.error(error);
+      // console.error(error);
       console.error(
         "Couldn't create shortcut, please run the file as administrator.",
       );
-      prompt("Press enter to continue...");
+      prompt("Press enter to continue anyway...");
     }
   }
 }
@@ -54,7 +53,7 @@ if (metadata?.tag) {
     const latest = await response.json();
     if (metadata.tag != latest?.tag_name) {
       if (
-        !confirm(
+        confirm(
           `A new version is available: ${latest.tag_name}\nWould you like to update automatically?`,
         )
       ) {
