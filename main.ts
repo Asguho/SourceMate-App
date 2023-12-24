@@ -2,7 +2,48 @@ import { parse, stringify } from "https://deno.land/x/xml@2.1.1/mod.ts";
 import data_dir from "https://deno.land/x/dir@1.5.1/data_dir/mod.ts";
 import metadata from "./metadata.json" assert { type: "json" };
 import { Source } from "./types.ts";
+const dataDir = data_dir();
 
+// Remove old version
+try {
+  const fileInfo = await Deno.stat(Deno.execPath() + ".old");
+  if (fileInfo.isFile) await Deno.remove(Deno.execPath() + ".old");
+} catch (error) {
+  if (!(error instanceof Deno.errors.NotFound)) {
+    throw error;
+  }
+}
+
+// Check and create shortcut
+if (dataDir && !Deno.cwd().includes(dataDir)) {
+  if (confirm("Would you like a shortcut on the desktop?")) {
+    console.log("Creating shortcut...");
+    await Deno.mkdir(dataDir + "\\Asguho\\WordSourceCLI", { recursive: true });
+    await Deno.rename(
+      Deno.execPath(),
+      dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
+    );
+
+    try {
+      await Deno.symlink(
+        dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
+        Deno.execPath() + ".lnk",
+      );
+    } catch (error) {
+      await Deno.link(
+        dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
+        Deno.execPath(),
+      );
+      console.error(error);
+      console.error(
+        "Couldn't create shortcut, please run the file as administrator.",
+      );
+      prompt("Press enter to continue...");
+    }
+  }
+}
+
+// Check for updates
 if (metadata?.tag) {
   const response = await fetch(
     "https://api.github.com/repos/Asguho/word-source-cli/releases/latest",
@@ -12,15 +53,39 @@ if (metadata?.tag) {
   } else {
     const latest = await response.json();
     if (metadata.tag != latest?.tag_name) {
-      console.log("New version available");
-      console.log("Please download the new version at:");
-      console.log("https://github.com/Asguho/word-source-cli/releases/latest");
-      prompt("Press enter to exit");
-      Deno.exit();
+      if (
+        !confirm(
+          `A new version is available: ${latest.tag_name}\nWould you like to update automatically?`,
+        )
+      ) {
+        for (const asset of latest.assets) {
+          if (Deno.execPath().includes(asset.name)) {
+            console.log("Downloading latest version...");
+            const latestFileResponse = await fetch(
+              asset.browser_download_url,
+            );
+            if (!latestFileResponse.ok) {
+              console.error(
+                "Couldn't download latest version, please check your internet.",
+              );
+            } else {
+              console.log("Downloaded latest version. Writing to file...");
+              const data = await latestFileResponse.arrayBuffer();
+              await Deno.rename(Deno.execPath(), Deno.execPath() + ".old");
+              await Deno.writeFile(Deno.execPath(), new Uint8Array(data));
+              console.log("Wrote to file. Restarting...");
+              const cmd = new Deno.Command(Deno.execPath());
+              cmd.spawn();
+              Deno.exit();
+            }
+          }
+        }
+      }
     }
   }
 }
 
+//
 const json = await getJson();
 if (Deno.args.length > 0) {
   // for (const url of Deno.args) {
@@ -106,7 +171,13 @@ if (Deno.args.length > 0) {
       continue;
     }
 
-    json["b:Sources"]["b:Source"].push(convertToSourceFormat(data));
+    if (
+      json["b:Sources"] instanceof Object &&
+      Array.isArray(json["b:Sources"]["b:Source"])
+    ) {
+      json["b:Sources"]["b:Source"].push(convertToSourceFormat(data));
+    }
+
     await Deno.writeTextFile(
       data_dir() + "/Microsoft/Bibliography/Sources.xml",
       stringify(json),
