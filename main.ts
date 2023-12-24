@@ -27,12 +27,11 @@ if (dataDir && !Deno.cwd().includes(dataDir)) {
       dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
       Deno.execPath() + ".lnk",
     );
-  } catch (error) {
+  } catch (_error) {
     await Deno.link(
       dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
       Deno.execPath(),
     );
-    console.debug(error);
     console.error(
       "Couldn't create shortcut, please run the file as administrator.",
     );
@@ -66,11 +65,11 @@ if (metadata?.tag) {
                 "Couldn't download latest version, please check your internet.",
               );
             } else {
-              console.log("Downloaded latest version. Writing to file...");
+              console.log("Writing to file...");
               const data = await latestFileResponse.arrayBuffer();
               await Deno.rename(Deno.execPath(), Deno.execPath() + ".old");
               await Deno.writeFile(Deno.execPath(), new Uint8Array(data));
-              console.log("Wrote to file. Restarting...");
+              console.log("Restarting...");
               const cmd = new Deno.Command(Deno.execPath());
               cmd.spawn();
               Deno.exit();
