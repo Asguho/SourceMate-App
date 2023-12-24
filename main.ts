@@ -4,15 +4,20 @@ import metadata from "./metadata.json" assert { type: "json" };
 import { Source } from "./types.ts";
 
 if (metadata?.tag) {
-  const latest = await fetch(
+  const response = await fetch(
     "https://api.github.com/repos/Asguho/word-source-cli/releases/latest",
-  ).then((res) => res.json());
-  if (metadata.tag != latest?.tag_name) {
-    console.log("New version available");
-    console.log("Please download the new version at:");
-    console.log("https://github.com/Asguho/word-source-cli/releases/latest");
-    prompt("Press enter to continue anyway.");
-    console.clear();
+  );
+  if (!response.ok) {
+    console.error("Couldn't get latest version, please check your internet.");
+  } else {
+    const latest = await response.json();
+    if (metadata.tag != latest?.tag_name) {
+      console.log("New version available");
+      console.log("Please download the new version at:");
+      console.log("https://github.com/Asguho/word-source-cli/releases/latest");
+      prompt("Press enter to exit");
+      Deno.exit();
+    }
   }
 }
 
