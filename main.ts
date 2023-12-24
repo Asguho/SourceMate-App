@@ -27,12 +27,11 @@ if (dataDir && !Deno.cwd().includes(dataDir) && Deno.cwd() != Deno.execPath()) {
       dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
       Deno.execPath() + ".lnk",
     );
-  } catch (error) {
+  } catch (_error) {
     await Deno.link(
       dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
       Deno.execPath(),
     );
-    console.warn(error[0]);
     console.error(
       "Couldn't create shortcut, please run the file as administrator.",
     );
