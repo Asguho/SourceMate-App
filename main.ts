@@ -62,7 +62,13 @@ if (metadata?.tag) {
         )
       ) {
         for (const asset of latest.assets) {
-          if (Deno.execPath().includes(asset.name)) {
+          console.log(
+            Deno.execPath(),
+            asset.name,
+            Deno.execPath().includes(asset.name),
+            Deno.build,
+          );
+          if (asset.name.includes(Deno.build.os + "-" + Deno.build.arch)) {
             console.log("Downloading latest version...");
             const latestFileResponse = await fetch(
               asset.browser_download_url,
