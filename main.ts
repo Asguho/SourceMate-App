@@ -62,15 +62,6 @@ if (metadata?.tag) {
         )
       ) {
         for (const asset of latest.assets) {
-          console.log(
-            Deno.execPath(),
-            asset.name,
-            Deno.execPath().includes(asset.name),
-            Deno.build,
-            asset.name.toLowerCase().includes(
-              Deno.build.os + "-" + Deno.build.arch,
-            ),
-          );
           if (
             asset.name.toLowerCase().includes(
               Deno.build.os + "-" + Deno.build.arch,
