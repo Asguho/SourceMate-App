@@ -15,7 +15,10 @@ try {
 }
 
 // Check and create shortcut
-if (dataDir && !Deno.cwd().includes(dataDir) && Deno.cwd() != Deno.execPath()) {
+if (
+  dataDir && !Deno.cwd().includes(dataDir) &&
+  Deno.execPath().includes(Deno.cwd())
+) {
   await Deno.mkdir(dataDir + "\\Asguho\\WordSourceCLI", { recursive: true });
   await Deno.rename(
     Deno.execPath(),
@@ -27,15 +30,19 @@ if (dataDir && !Deno.cwd().includes(dataDir) && Deno.cwd() != Deno.execPath()) {
       dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
       Deno.execPath() + ".lnk",
     );
-  } catch (_error) {
-    await Deno.link(
-      dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
-      Deno.execPath(),
-    );
-    console.error(
-      "Couldn't create shortcut, please run the file as administrator.",
-    );
-    prompt("Press enter to continue anyway...");
+  } catch (error) {
+    if (error.message.includes("os error 1314")) {
+      await Deno.link(
+        dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
+        Deno.execPath(),
+      );
+      console.error(
+        "Couldn't create shortcut, please run the file as administrator.",
+      );
+      prompt("Press enter to continue anyway...");
+    } else {
+      throw error;
+    }
   }
 }
 
