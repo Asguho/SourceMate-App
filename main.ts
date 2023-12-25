@@ -3,6 +3,7 @@ import data_dir from "https://deno.land/x/dir@1.5.1/data_dir/mod.ts";
 import metadata from "./metadata.json" assert { type: "json" };
 import { Source } from "./types.ts";
 const dataDir = data_dir();
+console.clear();
 
 // Remove old version
 try {
@@ -19,18 +20,23 @@ if (
   dataDir && !Deno.cwd().includes(dataDir) &&
   Deno.execPath().includes(Deno.cwd())
 ) {
+  // moving file to data dir
   await Deno.mkdir(dataDir + "\\Asguho\\WordSourceCLI", { recursive: true });
+
   await Deno.rename(
     Deno.execPath(),
     dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
   );
 
   try {
+    // creating shortcut
     await Deno.symlink(
       dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
-      Deno.execPath().replace(".exe", "") + ".lnk",
+      Deno.cwd() + "WordSourceCLI.lnk",
     );
   } catch (error) {
+    // if error is permission denied
+    // then make a hard link
     if (error.message.includes("os error 1314")) {
       await Deno.link(
         dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
@@ -47,7 +53,7 @@ if (
 }
 
 // Check for updates
-if (metadata?.tag) {
+if (metadata?.tag && Deno.execPath().includes(Deno.cwd())) {
   const response = await fetch(
     "https://api.github.com/repos/Asguho/word-source-cli/releases/latest",
   );
