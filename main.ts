@@ -28,7 +28,7 @@ if (
   try {
     await Deno.symlink(
       dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
-      Deno.execPath() + ".lnk",
+      Deno.execPath().replace(".exe", "") + ".lnk",
     );
   } catch (error) {
     if (error.message.includes("os error 1314")) {
