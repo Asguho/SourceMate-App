@@ -16,6 +16,7 @@ try {
 }
 
 // Check and create shortcut
+/*
 if (
   dataDir && !Deno.cwd().includes(dataDir) &&
   Deno.execPath().includes(Deno.cwd())
@@ -51,6 +52,7 @@ if (
     }
   }
 }
+*/
 
 // Check for updates
 if (metadata?.tag && Deno.execPath().includes(Deno.cwd())) {
