@@ -26,10 +26,20 @@ try {
     // moving file to data dir
     await Deno.mkdir(dataDir + "\\Asguho\\WordSourceCLI", { recursive: true });
 
-    await Deno.rename(
-      Deno.execPath(),
-      dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
-    );
+    try {
+      await Deno.rename(
+        Deno.execPath(),
+        dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
+      );
+    } catch (error) {
+      if (error.message.includes("os error 5")) {
+        console.error(
+          "Couldn't move file, please run the file as administrator.",
+        );
+      } else {
+        throw error;
+      }
+    }
 
     try {
       // creating shortcut
