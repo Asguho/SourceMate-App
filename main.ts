@@ -2,7 +2,7 @@ import { parse, stringify } from "https://deno.land/x/xml@2.1.1/mod.ts";
 import data_dir from "https://deno.land/x/dir@1.5.1/data_dir/mod.ts";
 import metadata from "./metadata.json" assert { type: "json" };
 import { Source } from "./types.ts";
-// const dataDir = data_dir();
+const dataDir = data_dir();
 console.clear();
 
 // Remove old version
@@ -18,43 +18,46 @@ try {
 }
 
 // Check and create shortcut
-/*
-if (
-  dataDir && !Deno.cwd().includes(dataDir) &&
-  Deno.execPath().includes(Deno.cwd())
-) {
-  // moving file to data dir
-  await Deno.mkdir(dataDir + "\\Asguho\\WordSourceCLI", { recursive: true });
+try {
+  if (
+    dataDir && !Deno.cwd().includes(dataDir) &&
+    Deno.execPath().includes(Deno.cwd())
+  ) {
+    // moving file to data dir
+    await Deno.mkdir(dataDir + "\\Asguho\\WordSourceCLI", { recursive: true });
 
-  await Deno.rename(
-    Deno.execPath(),
-    dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
-  );
-
-  try {
-    // creating shortcut
-    await Deno.symlink(
+    await Deno.rename(
+      Deno.execPath(),
       dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
-      Deno.cwd() + "WordSourceCLI.lnk",
     );
-  } catch (error) {
-    // if error is permission denied
-    // then make a hard link
-    if (error.message.includes("os error 1314")) {
-      await Deno.link(
+
+    try {
+      // creating shortcut
+      await Deno.symlink(
         dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
-        Deno.execPath(),
+        Deno.cwd() + "WordSourceCLI.lnk",
       );
-      console.error(
-        "Couldn't create shortcut, please run the file as administrator.",
-      );
-      prompt("Press enter to continue anyway...");
-    } else {
-      throw error;
+    } catch (error) {
+      // if error is permission denied
+      // then make a hard link
+      if (error.message.includes("os error 1314")) {
+        await Deno.link(
+          dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
+          Deno.execPath(),
+        );
+        console.error(
+          "Couldn't create shortcut, please run the file as administrator.",
+        );
+        prompt("Press enter to continue anyway...");
+      } else {
+        throw error;
+      }
     }
   }
+} catch (error) {
+  console.error("Couldn't create shortcut");
+  console.error(error);
 }
-*/
 
 // Check for updates
 if (metadata?.tag && Deno.execPath().includes(Deno.cwd())) {
