@@ -11,7 +11,7 @@ try {
   if (fileInfo.isFile) await Deno.remove(Deno.execPath() + ".old");
 } catch (error) {
   if (!(error instanceof Deno.errors.NotFound)) {
-    if (!(error.message.includes("os error 5"))) {
+    if ((error instanceof Deno.errors.PermissionDenied)) {
       console.error("Couldn't remove old version");
     } else throw error;
   }
