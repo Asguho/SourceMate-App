@@ -2,7 +2,7 @@ import { parse, stringify } from "https://deno.land/x/xml@2.1.1/mod.ts";
 import data_dir from "https://deno.land/x/dir@1.5.1/data_dir/mod.ts";
 import metadata from "./metadata.json" assert { type: "json" };
 import { Source } from "./types.ts";
-const dataDir = data_dir();
+// const dataDir = data_dir();
 console.clear();
 
 // Remove old version
@@ -11,7 +11,9 @@ try {
   if (fileInfo.isFile) await Deno.remove(Deno.execPath() + ".old");
 } catch (error) {
   if (!(error instanceof Deno.errors.NotFound)) {
-    throw error;
+    if (!(error instanceof Deno.errors.PermissionDenied)) {
+      console.error("Couldn't remove old version");
+    } else throw error;
   }
 }
 
