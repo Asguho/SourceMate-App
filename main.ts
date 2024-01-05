@@ -2,72 +2,72 @@ import { parse, stringify } from "https://deno.land/x/xml@2.1.1/mod.ts";
 import data_dir from "https://deno.land/x/dir@1.5.1/data_dir/mod.ts";
 import metadata from "./metadata.json" assert { type: "json" };
 import { Source } from "./types.ts";
-const dataDir = data_dir();
+// const dataDir = data_dir();
 console.clear();
 
-// Remove old version
-try {
-  const fileInfo = await Deno.stat(Deno.execPath() + ".old");
-  if (fileInfo.isFile) await Deno.remove(Deno.execPath() + ".old");
-} catch (error) {
-  if (!(error instanceof Deno.errors.NotFound)) {
-    if ((error instanceof Deno.errors.PermissionDenied)) {
-      console.error("Couldn't remove old version");
-    } else throw error;
-  }
-}
+// // Remove old version
+// try {
+//   const fileInfo = await Deno.stat(Deno.execPath() + ".old");
+//   if (fileInfo.isFile) await Deno.remove(Deno.execPath() + ".old");
+// } catch (error) {
+//   if (!(error instanceof Deno.errors.NotFound)) {
+//     if ((error instanceof Deno.errors.PermissionDenied)) {
+//       console.error("Couldn't remove old version");
+//     } else throw error;
+//   }
+// }
 
-// Check and create shortcut
-try {
-  if (
-    dataDir && !Deno.cwd().includes(dataDir) &&
-    Deno.execPath().includes(Deno.cwd())
-  ) {
-    // moving file to data dir
-    await Deno.mkdir(dataDir + "\\Asguho\\WordSourceCLI", { recursive: true });
+// // Check and create shortcut
+// try {
+//   if (
+//     dataDir && !Deno.cwd().includes(dataDir) &&
+//     Deno.execPath().includes(Deno.cwd())
+//   ) {
+//     // moving file to data dir
+//     await Deno.mkdir(dataDir + "\\Asguho\\WordSourceCLI", { recursive: true });
 
-    try {
-      await Deno.rename(
-        Deno.execPath(),
-        dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
-      );
-    } catch (error) {
-      if (error.message.includes("os error 5")) {
-        console.error(
-          "Couldn't move file, please run the file as administrator.",
-        );
-      } else {
-        throw error;
-      }
-    }
+//     try {
+//       await Deno.rename(
+//         Deno.execPath(),
+//         dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
+//       );
+//     } catch (error) {
+//       if (error.message.includes("os error 5")) {
+//         console.error(
+//           "Couldn't move file, please run the file as administrator.",
+//         );
+//       } else {
+//         throw error;
+//       }
+//     }
 
-    try {
-      // creating shortcut
-      await Deno.symlink(
-        dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
-        Deno.cwd() + "WordSourceCLI.lnk",
-      );
-    } catch (error) {
-      // if error is permission denied
-      // then make a hard link
-      if (error.message.includes("os error 1314")) {
-        await Deno.link(
-          dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
-          Deno.execPath(),
-        );
-        console.error(
-          "Couldn't create shortcut, please run the file as administrator.",
-        );
-        prompt("Press enter to continue anyway...");
-      } else {
-        throw error;
-      }
-    }
-  }
-} catch (error) {
-  console.error("Couldn't create shortcut");
-  console.error(error);
-}
+//     try {
+//       // creating shortcut
+//       await Deno.symlink(
+//         dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
+//         Deno.cwd() + "WordSourceCLI.lnk",
+//       );
+//     } catch (error) {
+//       // if error is permission denied
+//       // then make a hard link
+//       if (error.message.includes("os error 1314")) {
+//         await Deno.link(
+//           dataDir + "\\Asguho\\WordSourceCLI\\WordSourceCLI.exe",
+//           Deno.execPath(),
+//         );
+//         console.error(
+//           "Couldn't create shortcut, please run the file as administrator.",
+//         );
+//         prompt("Press enter to continue anyway...");
+//       } else {
+//         throw error;
+//       }
+//     }
+//   }
+// } catch (error) {
+//   console.error("Couldn't create shortcut");
+//   console.error(error);
+// }
 
 // Check for updates
 if (metadata?.tag && Deno.execPath().includes(Deno.cwd())) {
