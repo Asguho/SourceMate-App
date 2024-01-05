@@ -5,17 +5,17 @@ import { Source } from "./types.ts";
 // const dataDir = data_dir();
 console.clear();
 
-// // Remove old version
-// try {
-//   const fileInfo = await Deno.stat(Deno.execPath() + ".old");
-//   if (fileInfo.isFile) await Deno.remove(Deno.execPath() + ".old");
-// } catch (error) {
-//   if (!(error instanceof Deno.errors.NotFound)) {
-//     if ((error instanceof Deno.errors.PermissionDenied)) {
-//       console.error("Couldn't remove old version");
-//     } else throw error;
-//   }
-// }
+// Remove old version
+try {
+  const fileInfo = await Deno.stat(Deno.execPath() + ".old");
+  if (fileInfo.isFile) await Deno.remove(Deno.execPath() + ".old");
+} catch (error) {
+  if (!(error instanceof Deno.errors.NotFound)) {
+    if ((error instanceof Deno.errors.PermissionDenied)) {
+      console.error("Couldn't remove old version");
+    } else throw error;
+  }
+}
 
 // // Check and create shortcut
 // try {
@@ -197,7 +197,7 @@ if (Deno.args.length > 0) {
       !(json?.["b:Sources"] instanceof Object &&
         Array.isArray(json?.["b:Sources"]?.["b:Source"]))
     ) {
-      console.error("Invalid json format");
+      console.error("Invalid js on format");
       continue;
     }
 
