@@ -154,16 +154,16 @@ if (Deno.args.length > 0) {
     if (
       (data?.otherData?.url?.hostname).split(".").some((x) => {
         if (data.webPageName.toLowerCase().includes(x.toLowerCase())) {
-          console.log(
-            `"${data.webPageName}" includes the hostname: "${x}"`,
-          );
+          // console.log(
+          //   `"${data.webPageName}" includes the hostname: "${x}"`,
+          // );
         }
         return data.webPageName.toLowerCase().includes(x.toLowerCase());
       }) || data.authors.some((x) => {
         if (data.webPageName.toLowerCase().includes(x.toLowerCase())) {
-          console.log(
-            `"${data.webPageName}" includes the author: "${x}"`,
-          );
+          // console.log(
+          //   `"${data.webPageName}" includes the author: "${x}"`,
+          // );
         }
         return data.webPageName.toLowerCase().includes(x.toLowerCase());
       }) || data.webPageName.includes(" - ") ||
@@ -189,8 +189,12 @@ if (Deno.args.length > 0) {
     if (!data.year) {
       if (confirm("No date was found, would you like to enter the date?")) {
         data.year = prompt("Please enter the year:") || "";
-        data.month = prompt("Please enter the month:") || "";
-        data.day = prompt("Please enter the day:") || "";
+        if (!data.month && confirm("Would you also like to enter the month?")) {
+          data.month = prompt("Please enter the month:") || "";
+          if (!data.day && confirm("Would you also like to enter the day?")) {
+            data.day = prompt("Please enter the day:") || "";
+          }
+        }
       }
     }
     if (
