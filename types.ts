@@ -1,4 +1,5 @@
 export interface Source {
+  corporate: boolean;
   url: string;
   webPageName: string;
   webSiteName: string;

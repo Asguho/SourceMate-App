@@ -152,6 +152,17 @@ if (Deno.args.length > 0) {
       ) || "").split(",");
     }
     if (
+      (data.authors.length == 1 &&
+        ((data.authors[0].trim() || "").split(" ").length) <= 1)
+    ) {
+      data.corporate = true;
+    } else {
+      data.corporate = confirm(
+        `Is this a "${data.authors.join(",")}" corporate author?`,
+      );
+    }
+
+    if (
       (data?.otherData?.url?.hostname).split(".").some((x) => {
         if (data.webPageName.toLowerCase().includes(x.toLowerCase())) {
           // console.log(
@@ -226,10 +237,8 @@ async function getSiteName(hostname: string) {
   return res?.authors?.[0] || title.split(" - ")?.[0] || title;
 }
 
-function getAuthorJson(authors: string[]) {
-  if (
-    authors.length == 1 && ((authors[0].trim() || "").split(" ").length <= 1)
-  ) {
+function getAuthorJson(authors: string[], corporate: boolean = false) {
+  if (corporate) {
     return ({
       "b:Corporate": authors[0].trim() || "",
     });
@@ -255,7 +264,7 @@ function convertToSourceFormat(data: Source) {
   const date = new Date();
 
   console.log("\nData added:");
-  console.log("Author:", getAuthorJson(data.authors));
+  console.log("Author:", getAuthorJson(data.authors, data.corporate));
 
   console.log("Title:", data.webPageName);
   console.log("InternetSiteTitle:", data.webSiteName);
@@ -269,7 +278,7 @@ function convertToSourceFormat(data: Source) {
     "b:SourceType": "DocumentFromInternetSite",
     "b:Guid": `{${guid}}`,
     "b:Author": {
-      "b:Author": getAuthorJson(data.authors),
+      "b:Author": getAuthorJson(data.authors, data.corporate),
     },
     "b:Title": data.webPageName,
     "b:InternetSiteTitle": data.webSiteName,
