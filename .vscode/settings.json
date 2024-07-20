@@ -1,5 +1,5 @@
 {
-  "deno.enable": false,
+  "deno.enable": true,
   // "editor.defaultFormatter": "denoland.vscode-deno",
   "deno.lint": true,
   "done.format": true,
