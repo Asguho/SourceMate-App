@@ -1,6 +1,7 @@
 <script lang="ts">
+  let url = $state("");
 
 </script>
 
-
-<a href="source">Crawl Source</a>
+<input type="text" bind:value={url}>
+<a href="source?source={url}">Crawl Source</a>
