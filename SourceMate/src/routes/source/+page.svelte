@@ -28,9 +28,10 @@
                     <InputField name="Website" type="text" disabled={true} />
                     <InputField name="Date added" type="date" disabled={true}/>
                 </div>
-            </div>
             <input type="button" value="Add to Word" class="btn lg:btn-lg btn-primary">
-        {:catch error}
+            </div>
+        
+            {:catch error}
             <p>error: {error}</p>
         {/await}
     </div>
