@@ -1,6 +1,6 @@
-import { parse } from "https://deno.land/x/xml@2.1.1/mod.ts";
-import { Source } from "./types.ts";
-import data_dir from "https://deno.land/x/dir@1.5.1/data_dir/mod.ts";
+// import { parse } from "https://deno.land/x/xml@2.1.1/mod.ts";
+import type { Source } from "./types.ts";
+// import data_dir from "https://deno.land/x/dir@1.5.1/data_dir/mod.ts";
 
 export async function getSource(url: string): Promise<Source> {
   return await fetch(
@@ -71,52 +71,52 @@ export function convertToSourceFormat(data: Source) {
   };
 }
 
-export async function getJson() {
-  try {
-    const json = parse(
-      await Deno.readTextFile(
-        data_dir() + "/Microsoft/Bibliography/Sources.xml",
-      ),
-    );
-    if (json?.["b:Sources"] instanceof Object) {
-      if (Array.isArray(json?.["b:Sources"]?.["b:Source"])) {
-        if (json?.xml) {
-          json.xml["@version"] = "1.0";
-        } else {
-          console.error("xml is not defined");
-        }
-        return json;
-      }
-    }
+// export async function getJson() {
+//   try {
+//     const json = parse(
+//       await Deno.readTextFile(
+//         data_dir() + "/Microsoft/Bibliography/Sources.xml",
+//       ),
+//     );
+//     if (json?.["b:Sources"] instanceof Object) {
+//       if (Array.isArray(json?.["b:Sources"]?.["b:Source"])) {
+//         if (json?.xml) {
+//           json.xml["@version"] = "1.0";
+//         } else {
+//           console.error("xml is not defined");
+//         }
+//         return json;
+//       }
+//     }
 
-    return {
-      xml: { "@version": "1.0" },
-      "b:Sources": {
-        "@SelectedStyle": null,
-        "@xmlns:b":
-          "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
-        "@xmlns":
-          "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
-        "b:Source": json["b:Sources"] instanceof Object
-          ? [json["b:Sources"]["b:Source"]]
-          : [],
-      },
-    };
-  } catch (error) {
-    if (error instanceof Deno.errors.NotFound) {
-      return {
-        xml: { "@version": "1.0" },
-        "b:Sources": {
-          "@SelectedStyle": null,
-          "@xmlns:b":
-            "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
-          "@xmlns":
-            "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
-          "b:Source": [],
-        },
-      };
-    } else {
-      throw error;
-    }
-  }
-}
+//     return {
+//       xml: { "@version": "1.0" },
+//       "b:Sources": {
+//         "@SelectedStyle": null,
+//         "@xmlns:b":
+//           "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
+//         "@xmlns":
+//           "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
+//         "b:Source": json["b:Sources"] instanceof Object
+//           ? [json["b:Sources"]["b:Source"]]
+//           : [],
+//       },
+//     };
+//   } catch (error) {
+//     if (error instanceof Deno.errors.NotFound) {
+//       return {
+//         xml: { "@version": "1.0" },
+//         "b:Sources": {
+//           "@SelectedStyle": null,
+//           "@xmlns:b":
+//             "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
+//           "@xmlns":
+//             "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
+//           "b:Source": [],
+//         },
+//       };
+//     } else {
+//       throw error;
+//     }
+//   }
+// }
