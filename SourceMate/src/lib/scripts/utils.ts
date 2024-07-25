@@ -2,18 +2,18 @@
 import type { Source } from "./types.ts";
 // import data_dir from "https://deno.land/x/dir@1.5.1/data_dir/mod.ts";
 
-export async function getSource(url: string): Promise<Source> {
+export async function getSource(url: URL): Promise<Source> {
   return await fetch(
     "https://auto-references-api.deno.dev/api?url=" +
-      encodeURIComponent(url),
+      encodeURIComponent(url.toString()),
   ).then((res) => res.json());
 }
 
-export async function getSiteName(hostname: string) {
-  const res = await getSource(hostname);
-  const title = res?.otherData?.title;
-  return res?.authors?.[0] || title.split(" - ")?.[0] || title;
-}
+// export async function getSiteName(hostname: string) {
+//   const res = await getSource(hostname);
+//   const title = res?.otherData?.title;
+//   return res?.authors?.[0] || title.split(" - ")?.[0] || title;
+// }
 
 function getAuthorJson(authors: string[], corporate: boolean = false) {
   if (corporate) {
