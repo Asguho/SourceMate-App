@@ -1,7 +1,7 @@
 {
   "productName": "sourcemate",
   "version": "0.0.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "dk.sourcemate.dev",
   "build": {
     "beforeDevCommand": "vite dev",
     "devUrl": "http://localhost:1420",
