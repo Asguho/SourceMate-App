@@ -1,16 +1,16 @@
 <script lang="ts">
-    import type { PageData } from './$types';
-    import { readTextFile, BaseDirectory } from '@tauri-apps/plugin-fs';
-    import InputField from '../../lib/components/InputField.svelte';
-    import { SvelteURL, SvelteDate } from 'svelte/reactivity';
-  import BackButton from '$lib/components/BackButton.svelte';
+import type { PageData } from "./$types";
+import { readTextFile, BaseDirectory } from "@tauri-apps/plugin-fs";
+import InputField from "../../lib/components/InputField.svelte";
+import { SvelteURL, SvelteDate } from "svelte/reactivity";
+import BackButton from "$lib/components/BackButton.svelte";
 
-    const { data } = $props()
-    const { sourceUrl, sourceData } = data
+const { data } = $props();
+const { sourceUrl, sourceData } = data;
 
-    
-    
-    // let url = $url()
+$inspect(sourceData);
+
+// let url = $url()
 </script>
 
 
