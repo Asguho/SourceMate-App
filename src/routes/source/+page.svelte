@@ -1,4 +1,5 @@
 <script lang="ts">
+import { goto } from "$app/navigation";
 import BackButton from "$lib/components/BackButton.svelte";
 import type { Source } from "$lib/scripts/sourceSchema";
 import { writeToWord } from "$lib/scripts/utils";
@@ -68,7 +69,9 @@ $inspect(sourceData);
                 </div>
                 <input type="button" value="Add to Word" class="btn mt-16  btn-primary" onclick={()=>{
                     //@ts-ignore 
-                    writeToWord(source,sourceUrl);}}>
+                    writeToWord(source,sourceUrl);
+                    goto(localStorage.getItem("hideWordGuide") ? "/" : "/docs/word")
+                }}>
             </div>
        {/if}
     </div>
