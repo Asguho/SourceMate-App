@@ -1,19 +1,18 @@
 <script lang="ts">
 import type { PageData } from "./$types";
-import { readTextFile, BaseDirectory } from "@tauri-apps/plugin-fs";
+import { readTextFile, BaseDirectory, writeTextFile } from "@tauri-apps/plugin-fs";
 import InputField from "../../lib/components/InputField.svelte";
 import { SvelteURL, SvelteDate } from "svelte/reactivity";
 import BackButton from "$lib/components/BackButton.svelte";
 import { SOURCE_SCHEMA, type Source } from "$lib/scripts/sourceSchema";
 import { error } from "@sveltejs/kit";
 import { z } from "zod";
-import { XMLParser } from "fast-xml-parser";
-// import { parse } from "@libs/xml";
+import { XMLBuilder, XMLParser } from "fast-xml-parser";
 
 const { data } = $props();
 const { sourceUrl, sourceData } = data;
 let source: Source["source"] | null = $state(null);
-let errorMessage = $state(null);
+let errorMessage = $state(undefined);
 
 sourceData
 	.then((data) => {
@@ -25,12 +24,93 @@ sourceData
 
 $inspect(sourceData);
 
-const parser = new XMLParser();
+const parser = new XMLParser({
+	ignoreAttributes: false,
+});
+const builder = new XMLBuilder({
+	ignoreAttributes: false,
+});
+
 async function writeToWord() {
-	const json = parser.parse(await readTextFile("AppData\\Roaming\\Microsoft\\Bibliography\\Sources.xml", { baseDir: BaseDirectory.Home }));
-	console.log(json?.["b:Sources"]?.["b:Source"]);
+	let json = parser.parse(await readTextFile("AppData\\Roaming\\Microsoft\\Bibliography\\Sources.xml", { baseDir: BaseDirectory.Home }));
+	if (!source) {
+		alert("No source data found");
+		return;
+	}
+
+	if (!json["b:Sources"]["b:Source"]) {
+		console.log("No Bibliography found. Initializing with empty array");
+		json = {
+			"?xml": {
+				"@_version": "1.0",
+			},
+			"b:Sources": {
+				"b:Source": [],
+				"@_SelectedStyle": "",
+				"@_xmlns:b": "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
+				"@_xmlns": "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
+			},
+		};
+	}
+
+	if (!Array.isArray(json?.["b:Sources"]?.["b:Source"])) {
+		json["b:Sources"]["b:Source"] = [json["b:Sources"]["b:Source"]];
+	}
+
+	json?.["b:Sources"]?.["b:Source"].push(getSourceJson(source, sourceUrl));
+
+	await writeTextFile("AppData\\Roaming\\Microsoft\\Bibliography\\Sources.xml", builder.build(json), { baseDir: BaseDirectory.Home });
+}
+
+function getSourceJson(data: Source["source"], url: URL) {
+	const guid = crypto.randomUUID().toUpperCase();
+	const date = new Date();
+
+	return {
+		"b:Tag": guid,
+		"b:SourceType": "DocumentFromInternetSite",
+		"b:Guid": `{${guid}}`,
+		"b:Author": {
+			"b:Author": {
+				...(data.authorObject.corporate && { "b:Corporate": data.authorObject.corporate }),
+				...(data.authorObject.people && {
+					"b:NameList": {
+						"b:Person": data.authorObject.people.map((person) => ({
+							"b:First": person.firstName,
+							"b:Middle": person.middleName,
+							"b:Last": person.lastName,
+						})),
+					},
+				}),
+			},
+			// data.authorObject.people
+			// 	? {
+			// 			"b:NameList": {
+			// 				"b:Person": data.authorObject.people.map((person) => ({
+			// 					"b:First": person.firstName,
+			// 					"b:Middle": person.middleName,
+			// 					"b:Last": person.lastName,
+			// 				})),
+			// 			},
+			// 		}
+			// 	: data.authorObject.corporate
+			// 		? { "b:Corporate": data.authorObject.corporate }
+			// 		: {},
+		},
+		"b:Title": data.title,
+		"b:InternetSiteTitle": url.hostname,
+		"b:Year": data.date.slice(0, 4),
+		"b:Month": data.date.slice(5, 7),
+		"b:Day": data.date.slice(8, 10),
+		"b:URL": url.href,
+		"b:YearAccessed": date.getFullYear(),
+		"b:MonthAccessed": date.getMonth() + 1,
+		"b:DayAccessed": date.getDate(),
+	};
 }
 </script>
+
+
 
 
 <BackButton />
