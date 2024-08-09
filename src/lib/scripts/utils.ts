@@ -1,99 +1,84 @@
-import { parse } from "@libs/xml";
-import type { Source } from "./sourceSchema.ts";
-import { BaseDirectory, readTextFile } from "@tauri-apps/plugin-fs";
+import type { Source } from "$lib/scripts/sourceSchema";
+import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
+import { XMLBuilder, XMLParser } from "fast-xml-parser";
 
-function getAuthorJson(authors: string[], corporate = false) {
-	if (corporate) {
-		return {
-			"b:Corporate": authors[0].trim() || "",
+const parser = new XMLParser({
+	ignoreAttributes: false,
+});
+const builder = new XMLBuilder({
+	ignoreAttributes: false,
+});
+
+export async function writeToWord(source: Source["source"], sourceUrl: URL) {
+	let json = parser.parse(await readTextFile("AppData\\Roaming\\Microsoft\\Bibliography\\Sources.xml", { baseDir: BaseDirectory.Home }));
+
+	if (!json["b:Sources"]["b:Source"]) {
+		console.log("No Bibliography found. Initializing with empty array");
+		json = {
+			"?xml": {
+				"@_version": "1.0",
+			},
+			"b:Sources": {
+				"b:Source": [],
+				"@_SelectedStyle": "",
+				"@_xmlns:b": "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
+				"@_xmlns": "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
+			},
 		};
 	}
-	const authorsJson = [];
-	for (const author of authors) {
-		const authorNames = (author.trim() || "").split(" ");
-		authorsJson.push({
-			"b:Person": {
-				"b:First": authorNames[0],
-				"b:Middle": authorNames.slice(1, authorNames.length - 1).join(" "),
-				"b:Last": authorNames[authorNames.length - 1],
-			},
-		});
+
+	if (!Array.isArray(json?.["b:Sources"]?.["b:Source"])) {
+		json["b:Sources"]["b:Source"] = [json["b:Sources"]["b:Source"]];
 	}
-	return {
-		"b:NameList": authorsJson,
-	};
+
+	json?.["b:Sources"]?.["b:Source"].push(source2WordXml(source, sourceUrl));
+
+	await writeTextFile("AppData\\Roaming\\Microsoft\\Bibliography\\Sources.xml", builder.build(json), { baseDir: BaseDirectory.Home });
 }
 
-// export function convertToSourceFormat(data: Source) {
-// 	const guid = crypto.randomUUID().toUpperCase();
-// 	const date = new Date();
+function source2WordXml(data: Source["source"], url: URL) {
+	const guid = crypto.randomUUID().toUpperCase();
+	const date = new Date();
 
-// 	console.log("\nData added:");
-// 	console.log("Author:", getAuthorJson(data.authors, data.corporate));
-
-// 	console.log("Title:", data.webPageName);
-// 	console.log("InternetSiteTitle:", data.webSiteName);
-// 	if (data.year) console.log("Year:", data.year);
-// 	if (data.month) console.log("Month:", data.month);
-// 	if (data.day) console.log("Day:", data.day);
-// 	console.log("URL:", data.url);
-
-// 	return {
-// 		"b:Tag": guid,
-// 		"b:SourceType": "DocumentFromInternetSite",
-// 		"b:Guid": `{${guid}}`,
-// 		"b:Author": {
-// 			"b:Author": getAuthorJson(data.authors, data.corporate),
-// 		},
-// 		"b:Title": data.webPageName,
-// 		"b:InternetSiteTitle": data.webSiteName,
-// 		"b:Year": data.year,
-// 		"b:Month": data.month,
-// 		"b:Day": data.day,
-// 		"b:URL": data.url,
-// 		"b:YearAccessed": date.getFullYear(),
-// 		"b:MonthAccessed": date.getMonth() + 1,
-// 		"b:DayAccessed": date.getDate(),
-// 	};
-// }
-
-export async function getJson() {
-	try {
-		// json["~children"]
-		if (json?.["b:Sources"] instanceof Object) {
-			if (Array.isArray(json?.["b:Sources"]?.["b:Source"])) {
-				if (json?.xml) {
-					json.xml["@version"] = "1.0";
-				} else {
-					console.error("xml is not defined");
-				}
-				return json;
-			}
-		}
-
-		return {
-			xml: { "@version": "1.0" },
-			"b:Sources": {
-				"@SelectedStyle": null,
-				"@xmlns:b": "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
-				"@xmlns": "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
-				"b:Source": json["b:Sources"] instanceof Object ? [json["b:Sources"]["b:Source"]] : [],
+	return {
+		"b:Tag": guid,
+		"b:SourceType": "DocumentFromInternetSite",
+		"b:Guid": `{${guid}}`,
+		"b:Author": {
+			"b:Author": {
+				...(data.authorObject.corporate && { "b:Corporate": data.authorObject.corporate }),
+				...(data.authorObject.people && {
+					"b:NameList": {
+						"b:Person": data.authorObject.people.map((person) => ({
+							"b:First": person.firstName,
+							"b:Middle": person.middleName,
+							"b:Last": person.lastName,
+						})),
+					},
+				}),
 			},
-		};
-	} catch (error) {
-		console.error(error);
-		// if (error instanceof Deno.errors.NotFound) {
-		// 	return {
-		// 		xml: { "@version": "1.0" },
-		// 		"b:Sources": {
-		// 			"@SelectedStyle": null,
-		// 			"@xmlns:b": "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
-		// 			"@xmlns": "http://schemas.openxmlformats.org/officeDocument/2006/bibliography",
-		// 			"b:Source": [],
-		// 		},
-		// 	};
-		// } else {
-		// 	throw error;
-		// }
-	}
+			// data.authorObject.people
+			// 	? {
+			// 			"b:NameList": {
+			// 				"b:Person": data.authorObject.people.map((person) => ({
+			// 					"b:First": person.firstName,
+			// 					"b:Middle": person.middleName,
+			// 					"b:Last": person.lastName,
+			// 				})),
+			// 			},
+			// 		}
+			// 	: data.authorObject.corporate
+			// 		? { "b:Corporate": data.authorObject.corporate }
+			// 		: {},
+		},
+		"b:Title": data.title,
+		"b:InternetSiteTitle": url.hostname,
+		"b:Year": data.date.slice(0, 4),
+		"b:Month": data.date.slice(5, 7),
+		"b:Day": data.date.slice(8, 10),
+		"b:URL": url.href,
+		"b:YearAccessed": date.getFullYear(),
+		"b:MonthAccessed": date.getMonth() + 1,
+		"b:DayAccessed": date.getDate(),
+	};
 }
