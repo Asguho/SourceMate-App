@@ -27,8 +27,8 @@ $inspect(sourceData);
 
 const parser = new XMLParser();
 async function writeToWord() {
-	const json = parser.parse(await readTextFile("/Microsoft/Bibliography/Sources.xml", { baseDir: BaseDirectory.Home }));
-	console.log(json);
+	const json = parser.parse(await readTextFile("AppData\\Roaming\\Microsoft\\Bibliography\\Sources.xml", { baseDir: BaseDirectory.Home }));
+	console.log(json?.["b:Sources"]?.["b:Source"]);
 }
 </script>
 
