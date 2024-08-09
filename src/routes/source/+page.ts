@@ -1,4 +1,3 @@
-import { getSource } from "$lib/scripts/utils";
 import { error, redirect } from "@sveltejs/kit";
 import type { PageLoad } from "./$types";
 import { SvelteURL } from "svelte/reactivity";
@@ -19,6 +18,7 @@ export const load = (async ({ params, url, fetch }) => {
 	const sourceData = fetch(`${BACKEND_URL}/api/source?url=${sourceUrl.href}`)
 		.then((res) => {
 			if (res.ok) return res.json();
+			console.error("Fetching error", res);
 			error(503, {
 				message: "Failed to fetch source data",
 			});

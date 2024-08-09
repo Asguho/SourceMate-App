@@ -20,3 +20,5 @@ export const SOURCE_SCHEMA = z.object({
 		date: z.string().describe("The date the source was published or last modified in format YYYY-MM-DD"),
 	}),
 });
+
+export type Source = z.infer<typeof SOURCE_SCHEMA>;
