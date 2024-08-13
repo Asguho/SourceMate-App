@@ -1,10 +1,16 @@
 <script>
-import { invalidate } from "$app/navigation";
+import { goto, invalidate } from "$app/navigation";
 import { onMount } from "svelte";
 import "../app.css";
 
 let { data: propData, children } = $props();
 const { session, supabase } = propData;
+
+onMount(() => {
+	if (!session) {
+		goto("/auth/login");
+	}
+});
 
 $effect(() => {
 	const { data } = supabase.auth.onAuthStateChange((_, newSession) => {

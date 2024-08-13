@@ -13,7 +13,7 @@ let source: Source["source"] | null = $state(null);
 let errorMessage = $state(undefined);
 
 async function sourceData() {
-	if (!session) alert("No Session");
+	if (!session) goto("/auth/login");
 	return await fetch(`${BACKEND_URL}/api/source?url=${sourceUrl.href}`, {
 		headers: {
 			Authorization: session?.access_token || "",
