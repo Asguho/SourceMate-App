@@ -19,6 +19,7 @@
     "fs:allow-home-read-recursive",
     "fs:allow-home-write-recursive",
     "fs:default",
-    "fs:default"
+    "fs:default",
+    "updater:default"
   ]
 }
