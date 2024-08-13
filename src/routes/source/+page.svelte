@@ -1,23 +1,44 @@
 <script lang="ts">
 import { goto } from "$app/navigation";
 import BackButton from "$lib/components/BackButton.svelte";
-import type { Source } from "$lib/scripts/sourceSchema";
+import { BACKEND_URL } from "$lib/constants.js";
+import { SOURCE_SCHEMA, type Source } from "$lib/scripts/sourceSchema";
 import { writeToWord } from "$lib/scripts/utils";
+import { error } from "@sveltejs/kit";
 
 const { data } = $props();
-const { sourceUrl, sourceData } = data;
+const { session } = data;
+const { sourceUrl } = data;
 let source: Source["source"] | null = $state(null);
 let errorMessage = $state(undefined);
 
-sourceData
+async function sourceData() {
+	if (!session) alert("No Session");
+	return await fetch(`${BACKEND_URL}/api/source?url=${sourceUrl.href}`, {
+		headers: {
+			Authorization: session?.access_token || "",
+		},
+	})
+		.then((res) => {
+			if (res.ok) return res.json();
+			console.error("Fetching error", res);
+			error(503, {
+				message: "Failed to fetch source data",
+			});
+		})
+		.then((data) => {
+			console.log(data);
+			return SOURCE_SCHEMA.parse(data);
+		});
+}
+
+sourceData()
 	.then((data) => {
 		source = data.source;
 	})
 	.catch((error) => {
 		errorMessage = error;
 	});
-
-$inspect(sourceData);
 </script>
 
 <BackButton />

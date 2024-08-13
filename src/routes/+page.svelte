@@ -1,5 +1,8 @@
 <script lang="ts">
 let url = $state("");
+
+let { data: propData } = $props();
+const { session, supabase } = propData;
 </script>
 <a href="/auth/login">login</a>
 <div class="flex justify-center items-center min-h-screen">
