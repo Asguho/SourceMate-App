@@ -1,4 +1,5 @@
 <script lang="ts">
+import { goto } from "$app/navigation";
 import { BACKEND_URL } from "$lib/constants";
 import type { PageData } from "./$types";
 
@@ -12,14 +13,10 @@ let authInfo = $state({
 async function login() {
 	const res = await fetch(`${BACKEND_URL}/api/auth/login`, {
 		method: "POST",
-		// headers: {
-		// 	"Content-Type": "application/json",
-		// },
 		body: JSON.stringify(authInfo),
 	});
-	if (!res.ok) {
-		alert("Login request failed");
-		return;
+	if (res.ok) {
+		console.log(await fetch(`${BACKEND_URL}/api/auth/check`).then((res) => res.json()));
 	}
 	const data = (await res.json()) as unknown;
 	console.log(data);
