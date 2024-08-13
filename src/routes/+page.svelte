@@ -13,3 +13,5 @@ const { session, supabase } = propData;
     </form>
   </div>
 </div>
+
+<a href="https://github.com/Asguho/SourceMate-App/issues/new/choose" class="btn btn-outline absolute bottom-4 right-4">Report a Bug or Give Feedback!</a>
