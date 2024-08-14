@@ -3099,7 +3099,7 @@ dependencies = [
 
 [[package]]
 name = "sourcemate"
-version = "0.0.4"
+version = "0.0.6"
 dependencies = [
  "serde",
  "serde_json",

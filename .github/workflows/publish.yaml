@@ -34,16 +34,20 @@ jobs:
       #   with:
       #     node-version: lts/*
 
-      - uses: actions/cache@v4
+      # - uses: actions/cache@v4
+      #   with:
+      #     path: |
+      #       ~/.cargo/bin/
+      #       ~/.cargo/registry/index/
+      #       ~/.cargo/registry/cache/
+      #       ~/.cargo/git/db/
+      #       target/
+      #     # key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      #     key: key
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
         with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          # key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          key: key
+          workspaces: './src-tauri -> target'
 
       - uses: actions/cache@v4
         with:
