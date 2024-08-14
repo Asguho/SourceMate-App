@@ -1,6 +1,6 @@
 {
   "productName": "sourcemate",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "identifier": "dk.sourcemate.www",
   "build": {
     "beforeDevCommand": "vite dev",
@@ -29,7 +29,8 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "createUpdaterArtifacts": true
   },
   "plugins": {
     "updater": {
