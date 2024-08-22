@@ -1,3 +1,3 @@
 import { dev } from "$app/environment";
 
-export const BACKEND_URL = dev ? "http://localhost:5173" : "https://sourcemate.vercel.app";
+export const BACKEND_URL = dev ? "http://localhost:5173" : "https://www.sourcemate.dk";
