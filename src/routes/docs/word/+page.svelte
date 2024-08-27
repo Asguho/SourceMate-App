@@ -15,5 +15,5 @@ import { goto } from "$app/navigation";
     <button class="btn btn-warning" onclick={()=>{
         localStorage.setItem("hideWordGuide", "true")
         goto("/")
-    }}>Dont show this agin</button>
+    }}>Dont show this again</button>
 </main>
