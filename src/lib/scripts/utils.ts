@@ -10,8 +10,12 @@ const builder = new XMLBuilder({
 });
 
 export async function writeToWord(source: Source["source"], sourceUrl: URL) {
-	let json = parser.parse(await readTextFile("AppData\\Roaming\\Microsoft\\Bibliography\\Sources.xml", { baseDir: BaseDirectory.Home }));
-
+	let json;
+	try {
+		json = parser.parse(await readTextFile("AppData\\Roaming\\Microsoft\\Bibliography\\Sources.xml", { baseDir: BaseDirectory.Home }));
+	} catch (error) {
+		json = {};
+	}
 	if (!json["b:Sources"]["b:Source"]) {
 		console.log("No Bibliography found. Initializing with empty array");
 		json = {
