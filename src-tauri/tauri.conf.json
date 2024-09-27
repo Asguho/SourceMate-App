@@ -1,6 +1,6 @@
 {
   "productName": "sourcemate",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "identifier": "dk.sourcemate.www",
   "build": {
     "beforeDevCommand": "vite dev",
