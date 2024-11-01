@@ -1,7 +1,7 @@
 {
   "productName": "sourcemate",
-  "version": "0.0.9",
-  "identifier": "dk.sourcemate.www",
+  "version": "0.0.10",
+  "identifier": "dk.sourcemate.app",
   "build": {
     "beforeDevCommand": "vite dev",
     "devUrl": "http://localhost:1420",
