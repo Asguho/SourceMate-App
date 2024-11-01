@@ -16,7 +16,7 @@ export async function writeToWord(source: Source["source"], sourceUrl: URL) {
 	} catch (error) {
 		json = {};
 	}
-	if (!json["b:Sources"]["b:Source"]) {
+	if (!json["b:Sources"]?.["b:Source"]) {
 		console.log("No Bibliography found. Initializing with empty array");
 		json = {
 			"?xml": {
