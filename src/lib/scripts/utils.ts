@@ -40,9 +40,41 @@ export async function writeToWord(source: Source["source"], sourceUrl: URL) {
 	await writeTextFile("AppData\\Roaming\\Microsoft\\Bibliography\\Sources.xml", builder.build(json), { baseDir: BaseDirectory.Home });
 }
 
+export async function copyBibtexToClipboard(source: Source["source"], sourceUrl: URL) { 
+	const bibtex = source2Bibtex(source, sourceUrl);
+	await navigator.clipboard.writeText(bibtex);
+}
+function source2Bibtex(data: Source["source"], url: URL) {
+  // Extract authors
+  const authors = data.authorObject.people
+    .map(person => {
+      // Combine names, handling potential missing middle names
+      const middleName = person.middleName ? ` ${person.middleName}` : '';
+      return `${person.lastName}, ${person.firstName}${middleName}`;
+    })
+    .join(' and ');
+
+  // Generate a unique citation key (you might want to customize this)
+  const citationKey = `${data.authorObject.people[0]?.lastName || 'Unknown'}${new Date(data.date).getFullYear()}`;
+
+  // Create BibTeX entry
+  const bibtexEntry = `@misc{${citationKey},
+  author = {${authors}},
+  title = {${data.title}},
+  url = {${url.href}},
+  year = {${new Date(data.date).getFullYear()}},
+  date = {${data.date}}${data.authorObject.corporate ? `,
+  organization = {${data.authorObject.corporate}}` : ''}
+}`;
+
+  return bibtexEntry;
+}
+
+
 function source2WordXml(data: Source["source"], url: URL) {
 	const guid = crypto.randomUUID().toUpperCase();
 	const date = new Date();
+	console.log(data.date);
 
 	return {
 		"b:Tag": guid,

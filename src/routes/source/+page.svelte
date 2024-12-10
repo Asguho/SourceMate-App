@@ -3,7 +3,7 @@
   import BackButton from '$lib/components/BackButton.svelte';
   import { BACKEND_URL } from '$lib/constants.js';
   import { SOURCE_SCHEMA, type Source } from '$lib/scripts/sourceSchema';
-  import { writeToWord } from '$lib/scripts/utils';
+  import { copyBibtexToClipboard, writeToWord } from '$lib/scripts/utils';
   import { error } from '@sveltejs/kit';
 
   const { data } = $props();
@@ -11,6 +11,7 @@
   const { sourceUrl } = data;
   let source: Source['source'] | null = $state(null);
   let errorMessage = $state(undefined);
+  let outputFormat = $state('word');
 
   async function sourceData() {
     if (!session) goto('/auth/login');
@@ -95,16 +96,36 @@
             value={new Date().toISOString().substring(0, 10)}
           />
         </div>
-        <input
-          type="button"
-          value="Add to Word"
-          class="btn mt-16 btn-primary"
-          onclick={() => {
-            //@ts-ignore
-            writeToWord(source, sourceUrl);
-            goto(localStorage.getItem('hideWordGuide') ? '/' : '/docs/word');
-          }}
-        />
+        <div class="flex justify-between items-center mt-8">
+          <select bind:value={outputFormat} class="  select select-bordered">
+            <option value="word">Word</option>
+            <option value="bibtex">Bibtex</option>
+          </select>
+          <input
+            type="button"
+            value={(() => {
+              if (outputFormat === 'word') {
+                return 'Add to Word';
+              } else if (outputFormat === 'bibtex') {
+                return 'Copy Bibtex to Clipboard';
+              }
+            })()}
+            class="btn btn-primary"
+            onclick={() => {
+              if (!source) {
+                alert('Source data is not loaded yet');
+                return;
+              }
+              if (outputFormat === 'word') {
+                writeToWord(source, sourceUrl);
+                goto(localStorage.getItem('hideWordGuide') ? '/' : '/docs/word');
+              } else if (outputFormat === 'bibtex') {
+                copyBibtexToClipboard(source, sourceUrl);
+                goto('/');
+              }
+            }}
+          />
+        </div>
       </div>
     {/if}
   </div>
