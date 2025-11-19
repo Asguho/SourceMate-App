@@ -13,13 +13,11 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@supabase/ssr": "^0.5.1",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-fs": "~2",
     "@tauri-apps/plugin-shell": "^2",
     "@tauri-apps/plugin-updater": "~2",
     "fast-xml-parser": "^4.5.0",
-    "posthog-js": "^1.180.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

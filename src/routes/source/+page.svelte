@@ -7,17 +7,15 @@
   import { error } from '@sveltejs/kit';
 
   const { data } = $props();
-  const { session } = data;
   const { sourceUrl } = data;
   let source: Source['source'] | null = $state(null);
-  let errorMessage = $state(undefined);
+  let errorMessage: any = $state(undefined);
   let outputFormat = $state('word');
 
   async function sourceData() {
-    if (!session) goto('/auth/login');
     return await fetch(`${BACKEND_URL}/api/source?url=${sourceUrl.href}`, {
       headers: {
-        Authorization: session?.access_token || '',
+        // Authorization: session?.access_token || '',
       },
     })
       .then((res) => {
@@ -50,7 +48,7 @@
     {#if errorMessage}
       <div>
         <h1 class="font-bold text-3xl">Error</h1>
-        {#if errorMessage?.message == 'Failed to fetch'}
+        {#if typeof errorMessage === 'object' && errorMessage?.message === 'Failed to fetch'}
           <p>Please check your internet connection</p>
         {:else}
           <p>{errorMessage}</p>
