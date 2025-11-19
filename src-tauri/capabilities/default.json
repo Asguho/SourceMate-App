@@ -7,7 +7,9 @@
   ],
   "permissions": [
     "core:default",
-    "shell:allow-open",
+    "core:webview:allow-create-webview",
+    "core:webview:allow-create-webview-window",
+    "opener:default",
     "fs:default",
     "fs:allow-home-write-recursive",
     "fs:allow-home-read-recursive"
