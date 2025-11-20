@@ -1,9 +1,9 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
   import BackButton from '$lib/components/BackButton.svelte';
-  import SplitWindowButton from '$lib/components/SplitWindowButton.svelte';
   import { BACKEND_URL } from '$lib/constants.js';
   import { SOURCE_SCHEMA, type Source } from '$lib/scripts/sourceSchema';
+  import { splitWindowWithUrl } from '$lib/scripts/tauri.js';
   import { copyBibtexToClipboard, writeToWord } from '$lib/scripts/utils';
   import { error } from '@sveltejs/kit';
 
@@ -35,18 +35,18 @@
   sourceData()
     .then((data) => {
       source = data.source;
+      
     })
     .catch((error) => {
       errorMessage = error;
     });
+
+  $effect(()=>{
+    splitWindowWithUrl(sourceUrl.href);
+  })
 </script>
 
 <BackButton />
-
-<!-- Split Window Button -->
-<div class="absolute top-4 right-4">
-  <SplitWindowButton url={sourceUrl.href} />
-</div>
 
 <!-- grid-cols-2 -->
 <div class="grid min-h-screen">
