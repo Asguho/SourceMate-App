@@ -50,6 +50,8 @@ async fn split_window_with_url(app: AppHandle, url: String) -> Result<(), String
         width / 2,
         height
     );
+
+    
     let _webview_right = window
         .add_child(
             tauri::webview::WebviewBuilder::new(
@@ -61,8 +63,11 @@ async fn split_window_with_url(app: AppHandle, url: String) -> Result<(), String
             PhysicalSize::new(width / 2, height),
         )
         .map_err(|e| format!("Failed to create right webview: {}", e))?;
-    println!("[lib.rs] Right webview created successfully");
 
+    _webview_right.set_size( PhysicalSize::new(width / 2, height)).map_err(|e| format!("Failed to set size for right webview: {}", e))?;
+    _webview_right.set_position( PhysicalPosition::new(width / 2, 0)).map_err(|e| format!("Failed to set position for right webview: {}", e))?;
+    println!("[lib.rs] Right webview created successfully");
+        _webview_right.show().map_err(|e| format!("Failed to show right webview: {}", e))?;
     // Mark as split
     {
         let mut is_split = state.is_split.lock().unwrap();
@@ -127,6 +132,12 @@ pub fn run() {
             split_window_with_url,
             close_external_webview
         ])
+        .on_webview_event(|window, event| match event {
+            tauri::WebviewEvent::DragDrop(event) => {
+                println!("{:?}", window.label());
+            }
+            _ => {}
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

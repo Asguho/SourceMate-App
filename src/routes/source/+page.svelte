@@ -64,7 +64,7 @@
 <BackButton />
 
 <!-- grid-cols-2 -->
-<div class="grid min-h-screen">
+<div class="grid grid-cols-2 min-h-screen">
     <div class="flex justify-center items-center">
         {#if errorMessage}
             <div>
@@ -214,18 +214,6 @@
             </div>
         {/if}
     </div>
-    <!--
-  <div>
-    <div class="bg-gray-500">
-      <iframe
-        src={sourceUrl.toString()}
-        frameborder="0"
-        title="Url viewer"
-        class=" w-full min-h-screen"
-        onload={() => {
-          console.log('iframe Loaded');
-        }}
-      ></iframe>
-    </div>
-  </div> -->
+    
+ 
 </div>
