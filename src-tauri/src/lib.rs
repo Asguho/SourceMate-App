@@ -67,7 +67,7 @@ async fn split_window_with_url(app: AppHandle, url: String) -> Result<(), String
     _webview_right.set_size( PhysicalSize::new(width / 2, height)).map_err(|e| format!("Failed to set size for right webview: {}", e))?;
     _webview_right.set_position( PhysicalPosition::new(width / 2, 0)).map_err(|e| format!("Failed to set position for right webview: {}", e))?;
     println!("[lib.rs] Right webview created successfully");
-        _webview_right.show().map_err(|e| format!("Failed to show right webview: {}", e))?;
+    _webview_right.show().map_err(|e| format!("Failed to show right webview: {}", e))?;
     // Mark as split
     {
         let mut is_split = state.is_split.lock().unwrap();
@@ -96,6 +96,10 @@ async fn close_external_webview(app: AppHandle) -> Result<(), String> {
         .ok_or("External webview not found")?;
 
     println!("[lib.rs] Closing external webview");
+    webview.set_auto_resize(false).map_err(|e| format!("Failed to disable auto-resize for external webview: {}", e))?;
+    webview.set_size(PhysicalSize::new(0, 0)).map_err(|e| format!("Failed to resize external webview: {}", e))?;
+    webview.set_position(PhysicalPosition::new(0, 0)).map_err(|e| format!("Failed to reposition external webview: {}", e))?;
+
     webview
         .close()
         .map_err(|e| format!("Failed to close external webview: {}", e))?;

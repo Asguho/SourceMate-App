@@ -6,9 +6,7 @@
 
     let { data: propData } = $props();
 
-    onMount(async () => {
-        await invoke("close_external_webview");
-    });
+  
 </script>
 
 <div class="flex justify-center items-center min-h-screen">
