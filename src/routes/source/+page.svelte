@@ -12,6 +12,11 @@
   const { data } = $props();
   const { sourceUrl } = data;
   let source: Source["source"] | null = $state(null);
+  const newAuthorEntry: Source["source"]["authorObject"]["people"][0] = $state({
+    firstName: "",
+    middleName: "",
+    lastName: "",
+  });
   let outputFormat = $state("word");
 
   async function sourceData() {
@@ -52,7 +57,7 @@
         title: "",
         authorObject: { people: [], corporate: "" },
         date: "",
-      }
+      };
     });
 
   $effect(() => {
@@ -64,6 +69,18 @@
       await invoke("close_external_webview");
     };
   });
+  function addNewAuthorIfNeeded() {
+    if (
+      newAuthorEntry.firstName ||
+      newAuthorEntry.middleName ||
+      newAuthorEntry.lastName
+    ) {
+      source?.authorObject.people.push({ ...newAuthorEntry });
+      newAuthorEntry.firstName = "";
+      newAuthorEntry.middleName = "";
+      newAuthorEntry.lastName = "";
+    }
+  }
 </script>
 
 <BackButton />
@@ -102,24 +119,51 @@
               <div class="flex gap-2">
                 <input
                   class="input input-bordered w-full line-clamp-1"
-                  name="Author"
                   type="text"
+                  autocomplete="off"
+                  autofill="off"
                   bind:value={author.firstName}
                 />
                 <input
                   class="input input-bordered w-full line-clamp-1"
-                  name="Author"
                   type="text"
+                  autocomplete="off"
+                  autofill="off"
                   bind:value={author.middleName}
                 />
                 <input
                   class="input input-bordered w-full line-clamp-1"
-                  name="Author"
                   type="text"
+                  autocomplete="off"
+                  autofill="off"
                   bind:value={author.lastName}
                 />
               </div>
             {/each}
+            <div class="flex gap-2" >
+              <input
+                class="input input-bordered w-full line-clamp-1"
+                type="text"
+                autocomplete="off"
+                autofill="off"
+                bind:value={newAuthorEntry.firstName}
+              />
+              <input
+                class="input input-bordered w-full line-clamp-1"
+                type="text"
+                autocomplete="off"
+                autofill="off"
+                bind:value={newAuthorEntry.middleName}
+              />
+              <input
+                class="input input-bordered w-full line-clamp-1"
+                type="text"
+                autocomplete="off"
+                autofill="off"
+                bind:value={newAuthorEntry.lastName}
+              />
+              <button class="btn btn-primary" class:hidden={!(newAuthorEntry.firstName || newAuthorEntry.middleName || newAuthorEntry.lastName)} onclick={addNewAuthorIfNeeded}>+</button>
+            </div>
           </div>
           <label class="" for="">Corporate Author</label>
           <input
@@ -164,9 +208,11 @@
             <option value="word">Word</option>
             <option value="bibtex">Bibtex</option>
           </select>
-            <input
+          <input
             type="button"
-            value={outputFormat === "word" ? "Add to Word" : "Copy Bibtex to Clipboard"}
+            value={outputFormat === "word"
+              ? "Add to Word"
+              : "Copy Bibtex to Clipboard"}
             class="btn btn-primary"
             onclick={() => {
               if (!source) return;
