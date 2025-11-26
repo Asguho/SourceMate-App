@@ -28,12 +28,12 @@ Mål for mødet:
 Vi vil rigtig gerne have en case
 
 
-produktet hovedet usp er at formindske virkelig repetitivt arbejde.
+Produktet hovedet usp er at formindske virkelig repetitivt arbejde.
 
 Vil gerne udvikle videre til et univers for både korrekt kilde citering formalia og for hvad der gør en kilde god. vi vil gerne holde workshops for hvordan man bruger programmet, hvordan korrekt kilde formalia er og hvad der gør en god kilde
 
 Mangler for et færdigt produkt: 
-mac support 
-måde at tracke hvem der bruger det 
-Auth system 
+- mac support 
+- måde at tracke hvem der bruger det 
+- Auth system 
 
