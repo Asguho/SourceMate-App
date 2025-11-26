@@ -1,17 +1,18 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import BackButton from "$lib/components/BackButton.svelte";
   import { BACKEND_URL } from "$lib/constants.js";
-  import { SOURCE_SCHEMA, type Source } from "$lib/scripts/sourceSchema";
+  import { SOURCE_SCHEMA } from "$lib/scripts/sourceSchema";
+  import type { Source } from "$lib/scripts/sourceSchema";
   import { splitWindowWithUrl } from "$lib/scripts/tauri.js";
   import { copyBibtexToClipboard, writeToWord } from "$lib/scripts/utils";
   import { error } from "@sveltejs/kit";
   import { onMount } from "svelte";
   import { invoke } from "@tauri-apps/api/core";
+  // import BackButton from "$lib/components/BackButton.svelte";
 
   const { data } = $props();
   const { sourceUrl } = data;
-  let source: Source["source"] | null = $state(null);
+  let source: any = $state(null);
   const newAuthorEntry: Source["source"]["authorObject"]["people"][0] = $state({
     firstName: "",
     middleName: "",
@@ -65,8 +66,8 @@
     splitWindowWithUrl(sourceUrl.href);
   });
   onMount(() => {
-    return async () => {
-      await invoke("close_external_webview");
+    return () => {
+      invoke("close_external_webview");
     };
   });
   function addNewAuthorIfNeeded() {
