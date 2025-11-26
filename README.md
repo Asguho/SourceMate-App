@@ -19,10 +19,10 @@ You can download the executable from the
 
 # Møde
 Mål for mødet:
-Kunne det være noget de kunne være interesseret i?
-Hvor meget kunne de på sigt forestille sig at sætte af i deres budget til det. og hvilken pris model vil de fortrække?
-Hvilke ting skal der udvikles for at de kunne være interesseret?
-Kunne det være interesseret i at investere i udligere lærings materialer og workshops på dette område?
+- Kunne det være noget de kunne være interesseret i?
+- Hvor meget kunne de på sigt forestille sig at sætte af i deres budget til det. og hvilken pris model vil de fortrække?
+- Hvilke ting skal der udvikles for at de kunne være interesseret?
+- Kunne det være interesseret i at investere i udligere lærings materialer og workshops på dette område?
 
 
 Vi vil rigtig gerne have en case
