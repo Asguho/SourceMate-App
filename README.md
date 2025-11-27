@@ -37,3 +37,19 @@ Mangler for et færdigt produkt:
 - måde at tracke hvem der bruger det 
 - Auth system 
 
+# TODO
+VIGTIGT:
+Mac support / certificate
+windows certificate
+
+Vigtig branding:
+Lav varm video 
+- https://www.youtube.com/watch?v=ZK-rNEhJIDs
+- https://www.youtube.com/watch?v=aSte18D2_YE
+Landing page, hvor video'en spiller stor rolle.
+
+Feat:
+auth system
+Tilføje bog support
+- STEP 1: Finde ud af hvor vi kan pull informationen fra
+Tilføje pdf support
